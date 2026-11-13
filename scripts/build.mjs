@@ -57,7 +57,7 @@ const brand = l => `<a href="${pathFor(l, '/')}" class="brand" aria-label="Jaiho
 const sourceChannel = 'https://t.me/s/jaiho91official';
 const apkUrl = 'https://d1i9jwkbb2057y.cloudfront.net/jaiho91_SEO_6BV0FPZR264.apk';
 const androidPath = '/guides/android-app/';
-const downloadButton = l => `<a class="button download-button" href="${h(apkUrl)}" data-track="download_apk" rel="external noreferrer">${icon('download')} ${l.download}</a>`;
+const downloadButton = l => `<a class="button download-button" href="${h(apkUrl)}" data-track="download_apk" rel="external noreferrer"><span class="download-inline">${icon('download')} ${l.download}</span><span class="download-card"><img src="/assets/mark.png" width="44" height="44" alt=""><span class="download-card-copy"><strong>${l.installTitle}</strong><small>Android APK</small></span><span class="download-card-action" aria-hidden="true">${l.installAction}</span></span></a>`;
 
 function layout(l, { path, title, description, body, article, breadcrumb, lastmod, index = true }) {
   const local = pathFor(l, path);
