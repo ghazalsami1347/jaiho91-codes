@@ -48,6 +48,10 @@ h3{font-size:1.16rem}
 .hero h1 em{display:block;color:var(--accent);font-style:normal}
 .hero-description{max-width:455px;font-size:clamp(.98rem,1.6vw,1.14rem);margin-top:21px;color:#ddcde1}
 .hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:25px}
+.hero-help{margin-top:5px}
+.download-panel{padding:16px 0 0}
+.download-panel p{margin-top:8px;font-size:.87rem}
+.download-button svg{width:18px;height:18px}
 .hero-art{position:relative;display:grid;place-items:center;min-width:0;isolation:isolate}
 .hero-art img{width:min(78%,344px);aspect-ratio:1;object-fit:contain;transform:rotate(-9deg);filter:drop-shadow(0 19px 22px #09050caa);z-index:1}
 .orbit{position:absolute;inset:auto;width:91%;max-width:440px;aspect-ratio:1.55;border:1px solid #a9579570;border-radius:50%;transform:rotate(-28deg)}
@@ -184,7 +188,7 @@ h3{font-size:1.16rem}
 @media(max-width:810px){
 .wrap{width:calc(100% - 40px)}
 .header-inner{gap:15px}
-#nav{gap:16px}
+#nav{gap:13px}
 .hero-grid{min-height:375px}
 .status-grid{grid-template-columns:1fr}
 .aside-card{max-width:420px}
@@ -197,16 +201,20 @@ h3{font-size:1.16rem}
 .menu-button:not([hidden]){display:block}
 #nav{grid-column:1/-1;gap:14px;flex-wrap:wrap}
 #nav[data-collapsible]:not([data-open]){display:none}
-.hero-grid{grid-template-columns:1fr}
-.hero-copy{padding:31px 0 15px}
-.hero h1{font-size:clamp(3rem,13vw,4.8rem)}
-.hero-description{margin-top:13px}
-.hero-actions{margin-top:17px}
-.hero-art{min-height:194px;margin-bottom:9px}
-.hero-art img{width:min(50%,205px)}
-.orbit{width:min(85%,335px);aspect-ratio:1.9}
-.orbit-two{width:min(78%,303px)}
-.spark-one{left:15%}.spark-two{right:14%}.spark-three{right:17%}
+.hero-grid{grid-template-columns:minmax(0,1fr);min-height:0}
+.hero-copy{padding:25px 0 17px}
+.eyebrow{margin-bottom:14px}
+.hero h1{font-size:clamp(2.72rem,9.5vw,4.6rem)}
+.hero-description{margin-top:12px;max-width:36ch}
+.hero-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:17px;max-width:390px}
+.hero-actions .button{padding-inline:7px;gap:5px;font-size:.87rem;min-height:48px}
+.hero-actions .button svg{width:16px;height:16px}
+.hero-art{position:absolute;right:-14px;top:14px;width:clamp(82px,25vw,146px);opacity:.5;pointer-events:none}
+.hero-art img{width:78%}
+.orbit{width:100%;aspect-ratio:1.65}
+.spark{font-size:1rem}
+.hero-copy .eyebrow,.hero-copy h1{max-width:calc(100% - 54px)}
+.download-panel .download-button{width:100%;max-width:390px;min-height:48px}
 .section{padding-block:32px}
 .section-heading{align-items:start;flex-direction:column;gap:6px;margin-bottom:16px}
 .section-heading .text-link{min-height:33px}

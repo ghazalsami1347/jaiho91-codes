@@ -9,6 +9,7 @@ export const actions = {
   source_click:'Source links',
   check_codes:'Check codes clicks',
   open_guide:'Guide clicks',
+  download_apk:'APK download clicks',
 };
 
 const tiers = ['VIP 0', 'VIP 1–20'];

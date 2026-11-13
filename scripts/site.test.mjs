@@ -159,13 +159,21 @@ test('generates crawlable pages, working internal routes and an empty state with
   const routes = [...(await page('sitemap.xml')).matchAll(/<loc>(.*?)<\/loc>/g)].map(match => new URL(match[1]));
   assert.equal(routes.length, 10);
   assert.equal(new Set(routes.map(url => url.pathname)).size, 10);
+  const apk = 'https://d1i9jwkbb2057y.cloudfront.net/jaiho91_SEO_6BV0FPZR264.apk';
+  for (const path of ['index.html', 'guides/android-app/index.html']) {
+    assert.ok((await page(path)).includes('href="' + apk + '" data-track="download_apk"'));
+  }
   assert.match(await page('404.html'), /noindex,follow/);
+  const titles = new Set();
+  const descriptions = new Set();
   for (const url of routes) {
     const html = await page(url.pathname.slice(1) + 'index.html');
     assert.equal(url.origin, site);
     assert.ok(html.includes(`rel="canonical" href="${url.href}"`));
     assert.match(html, /lang="en-IN"/);
     assert.equal([...html.matchAll(/<h1>/g)].length, 1);
+    titles.add(html.match(/<title>(.*?)<\/title>/)[1]);
+    descriptions.add(html.match(/<meta name="description" content="([^"]+)">/)[1]);
     const structured = html.match(/<script type="application\/ld\+json">(.*?)<\/script>/s)[1];
     assert.ok(JSON.parse(structured)['@graph'].some(node => node.url === url.href));
     for (const match of html.matchAll(/(?:href|src)="(\/[^"]*)"/g)) {
@@ -174,6 +182,8 @@ test('generates crawlable pages, working internal routes and an empty state with
       assert.ok((await stat(join(temp, 'dist', file))).isFile(), match[1]);
     }
   }
+  assert.equal(titles.size, routes.length);
+  assert.equal(descriptions.size, routes.length);
   const vercelPreview = runVercel('preview');
   assert.equal(vercelPreview.status, 0, vercelPreview.stderr);
   assert.match(await page('index.html'), /noindex,follow/);

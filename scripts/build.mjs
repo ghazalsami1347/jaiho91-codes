@@ -46,24 +46,41 @@ const paths = {
   clock:'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Zm0-15v5l3 2',
   menu:'M4 6h16M4 12h16M4 18h16',
   search:'M10 17a7 7 0 1 0 0-14 7 7 0 0 0 0 14Zm5 0 5 5',
+  download:'M12 3v12m-5-5 5 5 5-5M4 16v4h16v-4',
 };
 const icon = name => `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${paths[name]}"/></svg>`;
 const guideLink = guide => `/guides/${guide.slug}/`;
 const brand = () => `<a href="/" class="brand" aria-label="Jaiho91 Codes home"><img src="/assets/mark.png" alt="" width="38" height="38"><span>Jaiho<span class="brand-number">91</span><small>CODES</small></span></a>`;
 const sourceChannel = 'https://t.me/s/jaiho91official';
-const links = [['/', 'Home'], ['/codes/', 'Promo codes'], ['/guides/', 'Guides'], ['/about/', 'About']];
+const apkUrl = 'https://d1i9jwkbb2057y.cloudfront.net/jaiho91_SEO_6BV0FPZR264.apk';
+const androidPath = '/guides/android-app/';
+const downloadButton = () => `<a class="button download-button" href="${h(apkUrl)}" data-track="download_apk" rel="external noreferrer">${icon('download')} Download APK</a>`;
+const links = [['/', 'Home'], ['/codes/', 'Promo codes'], [androidPath, 'Android APK'], ['/guides/', 'Guides']];
 const pages = [];
 
-function layout({ path, title, description, body, article = false, index = true }) {
+function layout({ path, title, description, body, article, breadcrumb, index = true }) {
   const url = absolute(path);
-  const pageType = article ? 'Article' : 'WebPage';
+  const pageId = url + '#page';
+  const siteId = absolute('/#website');
+  const publisherId = absolute('/#publisher');
+  const page = {
+    '@type': path === '/guides/' ? 'CollectionPage' : 'WebPage',
+    '@id':pageId, url, name:title, description, inLanguage:'en-IN', isPartOf:{'@id':siteId},
+  };
   const graph = [
-    { '@type':'WebSite', '@id':absolute('/#website'), url:absolute('/'), name:'Jaiho91 Codes', inLanguage:'en-IN' },
-    { '@type':pageType, '@id':url + '#page', url, name:title, description, inLanguage:'en-IN', isPartOf:{'@id':absolute('/#website')}, ...(article ? { headline:title, author:{'@type':'Organization',name:'Jaiho91 Codes',url:absolute('/about/')}, mainEntityOfPage:url, image:absolute('/assets/social.jpg') } : {}) },
+    { '@type':'Organization', '@id':publisherId, name:'Jaiho91 Codes', url:absolute('/about/') },
+    { '@type':'WebSite', '@id':siteId, url:absolute('/'), name:'Jaiho91 Codes', inLanguage:'en-IN', publisher:{'@id':publisherId} },
+    page,
   ];
+  if (article) graph.push({
+    '@type':'Article', '@id':url + '#article', headline:article, description, inLanguage:'en-IN',
+    author:{'@id':publisherId}, publisher:{'@id':publisherId}, mainEntityOfPage:{'@id':pageId},
+  });
   if (path !== '/' && index) {
     const parents = article ? [['/guides/', 'Guides']] : [];
-    graph.push({ '@type':'BreadcrumbList', itemListElement:[['/', 'Home'], ...parents, [path, title.split(' | ')[0]]].map(([item, name], i) => ({
+    const breadcrumbId = url + '#breadcrumbs';
+    page.breadcrumb = {'@id':breadcrumbId};
+    graph.push({ '@type':'BreadcrumbList', '@id':breadcrumbId, itemListElement:[['/', 'Home'], ...parents, [path, breadcrumb]].map(([item, name], i) => ({
       '@type':'ListItem', position:i + 1, name, item:absolute(item),
     })) });
   }
@@ -109,11 +126,11 @@ ${brand()}
   const current = href === path || (href !== '/' && path.startsWith(href));
   return `<a href="${href}"${current ? ` aria-current="${href === path ? 'page' : 'location'}"` : ''}>${label}</a>`;
 }).join('')}</nav>
-<a class="button small header-cta" data-track="check_codes" href="${path === '/codes/' ? '#code-status' : '/codes/#code-status'}">Check codes ${icon('out')}</a>
+<a class="button small header-cta" data-track="check_codes" href="${path === '/codes/' || path === '/' ? '#code-status' : '/codes/#code-status'}">Check codes ${icon('out')}</a>
 </div></header>
 <main id="main" tabindex="-1">${body}</main>
 <footer class="site-footer"><div class="wrap footer-grid"><div>${brand()}<p>Independent Jaiho91 code tracking and app guides.</p></div>
-<nav aria-label="Footer navigation"><a href="/codes/">Promo codes</a><a href="/guides/">Guides</a><a href="/about/">Editorial policy</a><a href="/privacy/">Privacy</a></nav></div>
+<nav aria-label="Footer navigation"><a href="/codes/">Promo codes</a><a href="${androidPath}">Android APK</a><a href="/guides/">Guides</a><a href="/about/">Editorial policy</a><a href="/privacy/">Privacy</a></nav></div>
 <div class="wrap footer-bottom"><span>Jaiho91 Codes · India edition · Times in IST</span><span>Informational coverage · 18+</span></div></footer>
 </body>
 </html>
@@ -138,7 +155,7 @@ function codeCard(entry, expired = false) {
 
 function tracker({ full = false } = {}) {
   return `<section id="code-status" class="wrap section tracker" aria-labelledby="status-title">
-<div class="section-heading"><div><h2 id="status-title">Jaiho91 code status</h2><p>Choose your VIP tier and check the original announcement.</p></div><span class="review">${icon('clock')} Reviewed ${time(registry.lastReviewedAt)}</span></div>
+<div class="section-heading"><div><h2 id="status-title">Latest code status</h2><p>Check your VIP tier, source post and expiry time in IST.</p></div><span class="review">${icon('clock')} Last checked ${time(registry.lastReviewedAt, deadline)}</span></div>
 <div class="status-grid"><div>
 ${active.length ? `<fieldset class="tier-switch" data-code-filters hidden><legend class="sr-only">Choose your VIP tier</legend><div>${tiers.map(tier => `<label><input type="radio" name="vip-tier" value="${h(tier)}"${tier === active[0].tier ? ' checked' : ''}><span>${h(tier)}</span></label>`).join('')}</div></fieldset>` : ''}
 <div class="code-list" data-code-list>${active.map(entry => codeCard(entry)).join('')}</div>
@@ -157,24 +174,26 @@ function pageIntro(pathLabel, heading, intro, parent) {
 }
 
 pages.push({
-  path:'/', title:'Jaiho91 Promo Codes & Redeem Guides | India', description:'Check source-verified Jaiho91 promo code announcements by VIP tier, see deadlines in IST and find gift code, Android and login help for India.',
+  path:'/', title:'Jaiho91 Promo Codes & Android APK Download | India',
+  description:'Check Jaiho91 promo codes for VIP 0 and VIP 1–20, see expiry times in IST, and find the Android APK download and redeem code guide.',
   body:`<section class="hero"><div class="wrap hero-grid"><div class="hero-copy"><p class="eyebrow"><span></span> INDEPENDENT CODE TRACKER</p>
-<h1>Jaiho91 <em>promo codes</em></h1><p class="hero-description">Check the latest source-verified Jaiho91 codes, find your VIP tier and see how to redeem.</p>
-<div class="hero-actions"><a class="button" href="#code-status" data-track="check_codes">View code status ${icon('arrow')}</a><a class="button secondary" href="/guides/how-to-redeem/" data-track="open_guide">How to redeem</a></div></div>
-<div class="hero-art" aria-hidden="true"><span class="orbit orbit-one"></span><span class="orbit orbit-two"></span><span class="spark spark-one">✦</span><span class="spark spark-two">✦</span><span class="spark spark-three">✧</span><img src="/assets/jaiho91-badge.webp" srcset="/assets/jaiho91-badge-small.webp 420w, /assets/jaiho91-badge.webp 720w" sizes="(max-width: 640px) 205px, 344px" alt="" width="720" height="720" fetchpriority="high"></div></div></section>
+<h1>Jaiho91 <em>promo codes</em></h1><p class="hero-description">Check the latest Jaiho91 gift codes for your VIP level, see when they expire in IST, or download the app for Android.</p>
+<div class="hero-actions">${downloadButton()}<a class="button secondary" href="#code-status" data-track="check_codes">Check codes ${icon('arrow')}</a></div>
+<a class="text-link hero-help" href="${androidPath}">Android download help ${icon('arrow')}</a></div>
+<div class="hero-art" aria-hidden="true"><span class="orbit orbit-one"></span><span class="orbit orbit-two"></span><span class="spark spark-one">✦</span><span class="spark spark-two">✦</span><span class="spark spark-three">✧</span><img src="/assets/jaiho91-badge.webp" srcset="/assets/jaiho91-badge-small.webp 420w, /assets/jaiho91-badge.webp 720w" sizes="(max-width: 640px) 135px, 344px" alt="" width="720" height="720" decoding="async"></div></div></section>
 ${tracker()}
 <section class="section guide-section"><div class="wrap"><div class="section-heading"><div><h2>Jaiho91 guides</h2><p>Redemption, troubleshooting and account safety.</p></div><a class="text-link" href="/guides/">All guides ${icon('arrow')}</a></div><div class="guide-grid">${guides.slice(0,3).map(guideCard).join('')}</div></div></section>
 <section class="wrap section faq"><div><h2>Common questions</h2><p>What to know before using a Jaiho91 code.</p></div><div>${faq.map(([question, answer]) => `<details><summary>${h(question)}</summary><p>${h(answer)}</p></details>`).join('')}</div></section>`,
 });
 pages.push({
-  path:'/codes/', title:'Jaiho91 Code Status & VIP Code History | Jaiho91 Codes',
-  description:'Find Jaiho91 promo and gift code entries by VIP level. See announcement sources, expiry times in IST and archived code status.',
-  body:`${pageIntro('Promo codes', 'Jaiho91 promo code tracker', 'Browse source-checked entries, eligibility by VIP tier and past announcements.')}${tracker({full:true})}
+  path:'/codes/', title:'Jaiho91 Gift Code Today: VIP Status & Expiry in IST', breadcrumb:'Promo codes',
+  description:'Check whether a Jaiho91 gift code is available today for VIP 0 or VIP 1–20. See the original announcement, eligibility, expiry in IST and past codes.',
+  body:`${pageIntro('Promo codes', 'Jaiho91 gift code status', 'Check today’s code status for your VIP level and look up earlier announcements.')}${tracker({full:true})}
 <section class="wrap section history" id="code-history"><div class="section-heading"><div><h2>Code history</h2><p>Expired or withdrawn entries from earlier announcements.</p></div></div><div class="code-list" data-archive>${archive.map(entry => codeCard(entry, true)).join('')}</div><p data-archive-empty${archive.length ? ' hidden' : ''}>No archived entries yet.</p></section>`,
 });
 pages.push({
-  path:'/guides/', title:'Jaiho91 Guides: Redeem Codes, Android & Login | Jaiho91 Codes',
-  description:'Browse Jaiho91 guides for redeeming promo codes, troubleshooting rejected codes, checking Android downloads and getting sign-in help.',
+  path:'/guides/', title:'Jaiho91 Help: Redeem Codes, Android APK & Login', breadcrumb:'Guides',
+  description:'Find out where to enter a Jaiho91 redeem code, why a gift code might fail, how to download the Android APK, and what to do if your login OTP is delayed.',
   body:`${pageIntro('Guides', 'Jaiho91 guides', 'Find help with promo codes, Android, sign-in and account safety.')}
 <section class="wrap section guide-index" aria-label="Browse guides">
 <div class="guide-search" data-guide-search hidden><label for="guide-query">Search guides</label><div>${icon('search')}<input id="guide-query" type="search" placeholder="Try “OTP” or “redeem”"></div></div>
@@ -182,14 +201,16 @@ pages.push({
 });
 for (const guide of guides) {
   pages.push({
-    path:guideLink(guide), title:guide.title + ' | Jaiho91 Codes', description:guide.description, article:true,
+    path:guideLink(guide), title:guide.searchTitle ?? guide.title + ' | Jaiho91 Codes',
+    description:guide.description, article:guide.title, breadcrumb:guide.title,
     body:`${pageIntro(guide.title, guide.title, guide.description, true)}
+${guideLink(guide) === androidPath ? `<div class="wrap download-panel">${downloadButton()}<p>Android phones and tablets only. The APK is hosted on an external server.</p></div>` : ''}
 <article class="wrap section prose">${guide.sections.map(([heading, paragraph]) => `<h2>${h(heading)}</h2><p>${h(paragraph).replace(/\[([^\]]+)\]\((\/guides\/[a-z-]+\/)\)/g, '<a href="$2">$1</a>')}</p>`).join('')}
 <div class="prose-actions"><a class="button" href="/codes/">Check code status ${icon('arrow')}</a><a class="text-link" href="/guides/">All guides ${icon('arrow')}</a></div></article>`,
   });
 }
 pages.push({
-  path:'/about/', title:'Editorial and Verification Policy | Jaiho91 Codes',
+  path:'/about/', title:'Editorial and Verification Policy | Jaiho91 Codes', breadcrumb:'About',
   description:'How the independent Jaiho91 Codes tracker reviews public announcements, records deadlines and handles expiry.',
   body:`${pageIntro('About', 'How we check Jaiho91 codes', 'Jaiho91 Codes is an independent reference for promo-code announcements and app help.')}
 <section class="wrap section prose"><h2>Source checks</h2><p>We compare the exact entry, VIP tier and deadline with a public announcement from Jaiho91. Each listed code links to the announcement. A source check confirms what was posted. It does not involve testing a redemption in a player account.</p>
@@ -197,12 +218,12 @@ pages.push({
 <h2>Account and app support</h2><p>For account issues or promotion questions, use the help option in your existing Jaiho91 app or account. This site is independent of the operator and has no account access.</p><a class="text-link" href="/codes/">Open the code tracker ${icon('arrow')}</a></section>`,
 });
 pages.push({
-  path:'/privacy/', title:'Privacy | Jaiho91 Codes',
+  path:'/privacy/', title:'Privacy | Jaiho91 Codes', breadcrumb:'Privacy',
   description:'Privacy information for the independent Jaiho91 Codes website.',
   body:`${pageIntro('Privacy', 'Privacy', 'How the Jaiho91 Codes site handles visits and interactions.')}
 <section class="wrap section prose"><h2>Site features</h2><p>The site does not ask for an account or personal details. Tier switching and guide search run locally. Copying a code writes the selected text to your device clipboard.</p>
 ${analytics ? '<h2>Site analytics</h2><p>We count page views and selected actions, such as code copies, tier switches and link clicks. The dashboard stores daily totals by page and action. The analytics database contains no cookies, visitor IDs, IP addresses, referrers or search terms. Analytics respects Global Privacy Control and Do Not Track signals and keeps up to 90 days of totals.</p>' : ''}
-<h2>Hosting and external links</h2><p>The site uses no third-party analytics or advertising trackers. The hosting provider may process standard request logs, such as IP addresses. External announcement links are subject to the destination’s privacy terms.</p></section>`,
+<h2>Hosting and external links</h2><p>The site uses no third-party analytics or advertising trackers. Hosting and download providers may process standard request logs, such as IP addresses. External announcements and APK downloads are subject to the destination’s privacy terms.</p></section>`,
 });
 pages.push({
   path:'/404.html', title:'Page not found | Jaiho91 Codes', description:'Find the Jaiho91 code tracker and guides.',
