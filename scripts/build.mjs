@@ -50,6 +50,7 @@ const paths = {
   menu:'M4 6h16M4 12h16M4 18h16',
   search:'M10 17a7 7 0 1 0 0-14 7 7 0 0 0 0 14Zm5 0 5 5',
   download:'M12 3v12m-5-5 5 5 5-5M4 16v4h16v-4',
+  close:'m6 6 12 12M18 6 6 18',
 };
 const icon = name => `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${paths[name]}"/></svg>`;
 const guideLink = guide => `/guides/${guide.slug}/`;
@@ -57,7 +58,16 @@ const brand = l => `<a href="${pathFor(l, '/')}" class="brand" aria-label="Jaiho
 const sourceChannel = 'https://t.me/s/jaiho91official';
 const apkUrl = 'https://d1i9jwkbb2057y.cloudfront.net/jaiho91_SEO_6BV0FPZR264.apk';
 const androidPath = '/guides/android-app/';
-const downloadButton = l => `<a class="button download-button" href="${h(apkUrl)}" data-track="download_apk" rel="external noreferrer"><span class="download-inline">${icon('download')} ${l.download}</span><span class="download-card"><img src="/assets/mark.png" width="44" height="44" alt=""><span class="download-card-copy"><strong>${l.installTitle}</strong><small>Android APK</small></span><span class="download-card-action" aria-hidden="true">${l.installAction}</span></span></a>`;
+const downloadButton = l => `<a class="button download-button" href="${h(apkUrl)}" data-track="download_apk" rel="external noreferrer">${icon('download')} ${l.download}</a>`;
+
+function installPopup(l) {
+  return `<section class="install-popup" data-install-popup aria-labelledby="install-title" hidden>
+<img src="/assets/mark.png" width="44" height="44" alt="">
+<div class="install-copy"><strong id="install-title">${l.installTitle}</strong><small>Android APK</small></div>
+<a class="install-action" href="${h(apkUrl)}" data-track="download_apk" rel="external noreferrer" aria-label="${l.installAction} · Android APK">${l.installAction}</a>
+<button class="install-dismiss" type="button" aria-label="${l.dismissInstall}">${icon('close')}</button>
+</section>`;
+}
 
 function layout(l, { path, title, description, body, article, breadcrumb, lastmod, index = true }) {
   const local = pathFor(l, path);
@@ -136,6 +146,7 @@ ${brand(l)}
 <nav id="nav" aria-label="${l.prefix ? 'Main navigation' : 'मुख्य नेविगेशन'}">${navLinks}</nav>
 <nav class="language-switch" aria-label="${l.prefix ? 'Bhasha' : 'भाषा'}">${languageSwitch}</nav>
 </div></header>
+${path === '/' || path === androidPath ? installPopup(l) : ''}
 <main id="main" tabindex="-1">${body}</main>
 <footer class="site-footer"><div class="wrap footer-grid"><div>${brand(l)}<p>${l.footer}</p></div>
 <nav aria-label="${l.prefix ? 'Footer links' : 'फ़ुटर लिंक'}">${navLinks}<a href="${pathFor(l, '/about/')}">${l.about}</a><a href="${pathFor(l, '/privacy/')}">${l.privacy}</a></nav></div>

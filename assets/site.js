@@ -4,6 +4,35 @@ const ui = JSON.parse(document.body.dataset.ui);
 nav.dataset.collapsible = '';
 menu.hidden = false;
 
+const installPopup = document.querySelector('[data-install-popup]');
+if (installPopup) {
+  const mobile = matchMedia('(max-width: 640px)');
+  const key = 'jaiho91-apk-popup-dismissed';
+  let dismissed = false;
+  try { dismissed = sessionStorage.getItem(key) === '1'; } catch {}
+
+  function updateInstallPopup() {
+    installPopup.hidden = dismissed || !mobile.matches;
+  }
+
+  function dismissInstallPopup() {
+    dismissed = true;
+    try { sessionStorage.setItem(key, '1'); } catch {}
+    const restoreFocus = installPopup.contains(document.activeElement);
+    updateInstallPopup();
+    if (restoreFocus) document.querySelector('.download-button')?.focus({preventScroll:true});
+  }
+
+  installPopup.querySelector('.install-dismiss').addEventListener('click', dismissInstallPopup);
+  installPopup.querySelector('.install-action').addEventListener('click', dismissInstallPopup);
+  installPopup.addEventListener('keydown', event => {
+    if (event.key === 'Escape') dismissInstallPopup();
+  });
+  mobile.addEventListener('change', updateInstallPopup);
+  window.addEventListener('pageshow', updateInstallPopup);
+  updateInstallPopup();
+}
+
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 let motion;
 if (!reducedMotion.matches) {
