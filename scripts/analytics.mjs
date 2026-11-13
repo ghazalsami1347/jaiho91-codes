@@ -1,6 +1,7 @@
 import { DatabaseSync } from 'node:sqlite';
 import { mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
+import { locales, pathFor } from '../content/locales.mjs';
 
 export const actions = {
   page_view:'Page views',
@@ -13,6 +14,7 @@ export const actions = {
 };
 
 const tiers = ['VIP 0', 'VIP 1–20'];
+const trackerPaths = new Set(Object.values(locales).flatMap(locale => ['/', '/codes/'].map(path => pathFor(locale, path))));
 const dayLength = 86_400_000;
 const istOffset = 19_800_000;
 const dayAt = (time, daysAgo = 0) => new Date(time + istOffset - daysAgo * dayLength).toISOString().slice(0, 10);
@@ -60,7 +62,7 @@ export function openAnalytics(file, paths, now = Date.now) {
       const { path, action } = event;
       const usesTier = action === 'copy_code' || action === 'tier_switch';
       const validTier = tiers.includes(event.tier);
-      if (usesTier && (!validTier || (path !== '/' && path !== '/codes/'))) return false;
+      if (usesTier && (!validTier || !trackerPaths.has(path))) return false;
       if (event.tier !== undefined && (!validTier || (!usesTier && action !== 'source_click'))) return false;
       const time = now();
       pruneOld(time);

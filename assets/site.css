@@ -1,4 +1,5 @@
 @font-face{font-family:Manrope;src:url('/assets/manrope.woff2') format('woff2');font-weight:400 800;font-display:swap}
+@font-face{font-family:"Noto Sans Devanagari";src:url('/assets/noto-devanagari.woff2') format('woff2');font-weight:400 800;font-display:swap;unicode-range:U+0900-097F,U+1CD0-1CF4,U+1CF7-1CF9,U+200C-200D,U+20B9,U+25CC,U+A8E0-A8FF}
 :root{color-scheme:dark;--bg:#100e13;--panel:#1a161e;--subtle:#201924;--line:#342a39;--text:#f7f1f8;--dim:#bfb2c4;--accent:#fb94d8;--hot:#fa65c1;--mint:#a5e7c5;--wrap:1160px;font-family:Manrope,system-ui,sans-serif;background:var(--bg);color:var(--text)}
 *,*::before,*::after{box-sizing:border-box}
 body{margin:0;font-size:15px;line-height:1.65}
@@ -30,7 +31,12 @@ h3{font-size:1.16rem}
 #nav a{display:flex;align-items:center;min-height:44px;color:var(--dim);font-size:.88rem;font-weight:700}
 #nav a:hover,#nav a[aria-current]{color:var(--text)}
 #nav a[aria-current]::before{content:"";width:5px;height:5px;border-radius:100%;background:var(--hot);margin-right:7px}
-.header-cta{justify-self:end}
+.language-switch{justify-self:end;display:inline-flex;gap:3px;border:1px solid var(--line);border-radius:8px;padding:3px;background:var(--panel);white-space:nowrap}
+.language-switch a{display:grid;place-items:center;padding:4px 8px;min-height:36px;border-radius:5px;color:var(--dim);font-size:.74rem;font-weight:800}
+.language-switch a:hover,.language-switch a[aria-current]{background:#3a2035;color:#ffc2eb}
+html[lang="hi-IN"]{font-family:Manrope,"Noto Sans Devanagari",system-ui,sans-serif}
+html[lang="hi-IN"] h1,html[lang="hi-IN"] h2,html[lang="hi-IN"] h3{letter-spacing:normal;line-height:1.24}
+html[lang="hi-IN"] .hero h1{font-size:clamp(2.55rem,7.5vw,5.7rem)}
 .menu-button{display:none;color:var(--text);background:var(--panel);border:1px solid var(--line);border-radius:9px;width:44px;height:44px}
 .button{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:var(--accent);border:1px solid transparent;border-radius:9px;padding:11px 17px;color:#251021;font-weight:800;min-height:46px;line-height:1.3;white-space:nowrap}
 .button:hover{background:#ffb2e4}
@@ -156,6 +162,21 @@ h3{font-size:1.16rem}
 .guide-search input::placeholder{color:var(--dim)}
 .history{border-top:1px solid var(--line)}
 .history .code-list{max-width:810px}
+.tutorials{padding-block:10px 48px}
+.tutorial-note{font-size:.87rem;margin-bottom:12px}
+.tutorial-menu{display:flex;flex-wrap:wrap;gap:7px;list-style:none;padding:0;margin:0 0 24px}
+.tutorial-menu a{display:flex;align-items:center;min-height:44px;padding:6px 10px;border:1px solid var(--line);background:var(--panel);border-radius:8px;font-size:.84rem}
+.tutorial-menu a:hover{border-color:var(--accent);color:var(--accent)}
+.tutorial-card{scroll-margin-top:16px;padding:clamp(12px,3vw,24px);margin-bottom:16px;background:var(--panel);border:1px solid var(--line);border-radius:14px}
+.tutorial-card h2{font-size:clamp(1.35rem,4vw,2rem);margin-bottom:9px}
+.tutorial-card h3{font-size:1rem;margin:15px 0 9px}
+.tutorial-player summary{cursor:pointer;color:var(--accent);font-weight:800;min-height:44px;display:list-item;padding:9px 0}
+.tutorial-player video{display:block;max-width:100%;width:min(100%,300px);height:auto;aspect-ratio:9/16;background:#0e0b11;border-radius:10px}
+.tutorial-steps{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.tutorial-steps figure{margin:0;height:100%;background:#151017;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.tutorial-steps img{width:100%;height:auto}
+.tutorial-steps figcaption{display:flex;align-items:baseline;gap:7px;padding:10px;color:var(--dim);font-size:.87rem}
+.tutorial-steps figcaption span{flex:none;color:var(--accent);font-weight:800}
 .admin-header{display:flex;align-items:center;justify-content:space-between;min-height:71px}
 .admin-heading h1{font-size:clamp(2rem,5vw,3.5rem)}
 .admin-heading form{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
@@ -196,8 +217,12 @@ h3{font-size:1.16rem}
 }
 @media(max-width:640px){
 .wrap{width:calc(100% - 32px)}
-.header-inner{min-height:65px;grid-template-columns:1fr auto;gap:0}
-.header-cta{display:none}
+.header-inner{min-height:65px;grid-template-columns:1fr auto auto;gap:0 6px}
+.header-inner .brand{gap:5px}
+.header-inner .brand img{width:30px;height:30px}
+.language-switch{grid-row:1;grid-column:2}
+.language-switch a{min-height:44px}
+.menu-button{grid-row:1;grid-column:3}
 .menu-button:not([hidden]){display:block}
 #nav{grid-column:1/-1;gap:14px;flex-wrap:wrap}
 #nav[data-collapsible]:not([data-open]){display:none}
@@ -225,7 +250,14 @@ h3{font-size:1.16rem}
 .footer-bottom{flex-wrap:wrap}
 }
 @media(max-width:460px){
+.header-inner .brand{font-size:1.05rem}
+.header-inner .brand img{width:24px;height:24px}
+.language-switch a{padding-inline:5px}
+.hero-actions .button{white-space:normal}
 .code-list{grid-template-columns:1fr}
+.tutorial-steps{grid-template-columns:1fr}
+.tutorial-steps figure{display:grid;grid-template-columns:minmax(0,44%) minmax(0,1fr);align-items:center}
+.tutorial-steps figcaption{padding:8px}
 }
 @media(prefers-reduced-motion:no-preference){
 html{scroll-behavior:smooth}

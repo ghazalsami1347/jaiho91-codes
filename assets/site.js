@@ -1,5 +1,6 @@
 const menu = document.querySelector('.menu-button');
 const nav = document.querySelector('#nav');
+const ui = JSON.parse(document.body.dataset.ui);
 nav.dataset.collapsible = '';
 menu.hidden = false;
 
@@ -124,7 +125,7 @@ if (list) {
           card.querySelector('.copy')?.remove();
           const badge = card.querySelector('[data-status]');
           badge.classList.add('muted');
-          badge.querySelector('span').textContent = 'Expired';
+          badge.querySelector('span').textContent = ui.expired;
           badge.querySelector('path').setAttribute('d', 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Zm0-15v5l3 2');
           card.dataset.archived = '';
           card.hidden = false;
@@ -154,7 +155,7 @@ if (list) {
     tier = selected.value;
     const shown = updateCodes();
     reveal(shown, direction);
-    feedback.textContent = shown === empty ? 'No source-checked code for ' + tier + '.' : 'Showing code for ' + tier + '.';
+    feedback.textContent = (shown === empty ? ui.noTier : ui.showing) + ' ' + tier;
     track('tier_switch', tier);
   });
 
@@ -167,15 +168,15 @@ if (list) {
     button.addEventListener('click', async () => {
       if (isExpired(card)) {
         updateCodes();
-        feedback.textContent = 'This code has expired.';
+        feedback.textContent = ui.expired;
         return;
       }
       const copied = await copyText(value, button);
       button.toggleAttribute('data-copied', copied);
-      label.textContent = copied ? 'Copied' : 'Selected';
+      label.textContent = copied ? ui.copied : ui.selected;
       feedback.textContent = copied
-        ? 'Copied code for ' + card.dataset.tier + '.'
-        : 'Clipboard unavailable. The code is selected for manual copying.';
+        ? ui.copiedFor + ' ' + card.dataset.tier
+        : ui.copyFallback;
       if (copied) {
         track('copy_code', card.dataset.tier);
         if (motion && !reducedMotion.matches) {
@@ -185,7 +186,7 @@ if (list) {
       clearTimeout(resetTimer);
       resetTimer = setTimeout(() => {
         button.removeAttribute('data-copied');
-        label.textContent = 'Copy code';
+        label.textContent = ui.copy;
       }, 2400);
     });
   }
@@ -211,6 +212,6 @@ if (search) {
       if (!card.hidden) visible += 1;
     }
     empty.hidden = visible > 0;
-    count.textContent = visible + (visible === 1 ? ' guide found.' : ' guides found.');
+    count.textContent = ui.found + ' ' + visible;
   });
 }

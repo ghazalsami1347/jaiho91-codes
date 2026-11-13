@@ -52,13 +52,14 @@ test('stores only daily counts, persists them and prunes the retention window', 
   t.after(() => rm(temp, { recursive:true, force:true }));
   const file = join(temp, 'analytics.sqlite');
   let now = Date.parse('2026-11-12T20:30:00Z');
-  const paths = new Set(['/', '/codes/']);
+  const paths = new Set(['/', '/codes/', '/hi_en/codes/']);
   const open = () => openAnalytics(file, paths, () => now);
   let analytics = open();
   try {
     assert.equal(analytics.record({ path:'/', action:'page_view' }), true);
     assert.equal(analytics.record({ path:'/', action:'page_view' }), true);
     assert.equal(analytics.record({ path:'/codes/', action:'copy_code', tier:'VIP 0' }), true);
+    assert.equal(analytics.record({ path:'/hi_en/codes/', action:'tier_switch', tier:'VIP 0' }), true);
     assert.equal(analytics.record({ path:'/codes/', action:'copy_code', tier:'unknown' }), false);
     assert.equal(analytics.record({ path:'/unknown', action:'page_view' }), false);
   } finally { analytics.close(); }
@@ -148,7 +149,8 @@ test('generates crawlable pages, working internal routes and an empty state with
   const preview = run('--origin=');
   assert.equal(preview.status, 0, preview.stderr);
   assert.match(await page('index.html'), /noindex,follow/);
-  assert.match(await page('index.html'), /No source-checked code available/);
+  assert.match(await page('index.html'), /कोई सत्यापित कोड उपलब्ध नहीं/);
+  assert.match(await page('hi_en/index.html'), /Abhi koi verified code available nahi hai/);
   assert.doesNotMatch(await page('index.html'), /class="copy"/);
   assert.notEqual(run('--origin=', '--production').status, 0);
 
@@ -157,10 +159,10 @@ test('generates crawlable pages, working internal routes and an empty state with
   assert.equal(production.status, 0, production.stderr);
   assert.match(await page('robots.txt'), /Sitemap: https:\/\/jaiho91-preview\.test\/sitemap\.xml/);
   const routes = [...(await page('sitemap.xml')).matchAll(/<loc>(.*?)<\/loc>/g)].map(match => new URL(match[1]));
-  assert.equal(routes.length, 10);
-  assert.equal(new Set(routes.map(url => url.pathname)).size, 10);
+  assert.equal(routes.length, 22);
+  assert.equal(new Set(routes.map(url => url.pathname)).size, 22);
   const apk = 'https://d1i9jwkbb2057y.cloudfront.net/jaiho91_SEO_6BV0FPZR264.apk';
-  for (const path of ['index.html', 'guides/android-app/index.html']) {
+  for (const path of ['index.html', 'guides/android-app/index.html', 'hi_en/index.html', 'hi_en/guides/android-app/index.html']) {
     assert.ok((await page(path)).includes('href="' + apk + '" data-track="download_apk"'));
   }
   assert.match(await page('404.html'), /noindex,follow/);
@@ -170,7 +172,16 @@ test('generates crawlable pages, working internal routes and an empty state with
     const html = await page(url.pathname.slice(1) + 'index.html');
     assert.equal(url.origin, site);
     assert.ok(html.includes(`rel="canonical" href="${url.href}"`));
-    assert.match(html, /lang="en-IN"/);
+    const roman = url.pathname.startsWith('/hi_en/');
+    const hindiPath = roman ? url.pathname.slice('/hi_en'.length) : url.pathname;
+    assert.match(html, roman ? /<html lang="hi-Latn-IN">/ : /<html lang="hi-IN">/);
+    assert.ok(html.includes('hreflang="hi-IN" href="' + site + hindiPath + '"'));
+    assert.ok(html.includes('hreflang="hi-Latn-IN" href="' + site + '/hi_en' + hindiPath + '"'));
+    assert.ok(html.includes('hreflang="x-default" href="' + site + hindiPath + '"'));
+    if (hindiPath === '/tutorials/') {
+      assert.equal([...html.matchAll(/<video controls playsinline preload="none"/g)].length, 7);
+      assert.equal([...html.matchAll(/<figcaption>/g)].length, 21);
+    }
     assert.equal([...html.matchAll(/<h1>/g)].length, 1);
     titles.add(html.match(/<title>(.*?)<\/title>/)[1]);
     descriptions.add(html.match(/<meta name="description" content="([^"]+)">/)[1]);

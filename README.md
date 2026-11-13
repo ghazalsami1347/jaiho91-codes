@@ -2,6 +2,12 @@
 
 A responsive code tracker with five support guides, a searchable guide index, a code archive, and an editorial policy. The public pages are pre-rendered for fast loading and SEO. The included Node.js server adds first-party analytics and a private dashboard.
 
+The public site defaults to Hindi. The Roman Hindi edition mirrors it under `/hi_en/`. The language switch links to the equivalent page in the other script. Both editions have their own canonicals and reciprocal language alternates.
+
+## Edit tutorials and translations
+
+Shared site labels live in `content/locales.mjs`, guide translations in `content/guides.mjs`, and screenshot captions in `content/tutorials.mjs`. Each tutorial uses one portrait MP4 and three WebP screenshots in `assets/tutorials/`. The filenames start with the tutorial slug, with `-1`, `-2` and `-3` for the stills. Videos load on demand, and screenshots use lazy loading. Include `localizedTerms.hi` and `localizedTerms.hi_en` when adding a code to provide its eligibility and deadline notes in both scripts.
+
 ## Run locally
 
 Install Node.js 24 or later if needed. If an earlier version of the preview is open, press Ctrl+C in its terminal first. Open a terminal in this folder and run:
