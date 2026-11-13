@@ -1,0 +1,185 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { spawn, spawnSync } from 'node:child_process';
+import { once } from 'node:events';
+import { createInterface } from 'node:readline';
+import { cp, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { listCodes, validateRegistry } from './registry.mjs';
+import { openAnalytics } from './analytics.mjs';
+
+const root = fileURLToPath(new URL('../', import.meta.url));
+const registry = JSON.parse(await readFile(join(root, 'content', 'codes.json'), 'utf8'));
+const review = Date.parse(registry.lastReviewedAt);
+
+test('checks provenance and dates, and archives entries at the expiry boundary', () => {
+  const fixture = {
+    lastReviewedAt: '2026-01-02T13:00:00+05:30',
+    sources: { 't.me/s/jaiho91official': 'Test source' },
+    codes: [{
+      id:'test-entry', tier:'VIP 0', code:'TEST-FIXTURE',
+      sourceUrl:'https://t.me/jaiho91official/1',
+      publishedAt:'2026-01-02T12:00:00+05:30',
+      verifiedAt:'2026-01-02T12:30:00+05:30',
+      expiresAt:'2026-01-03T12:00:00+05:30',
+      terms:'Test fixture only.',
+    }],
+  };
+  validateRegistry(registry, review);
+  validateRegistry(fixture, Date.parse(fixture.lastReviewedAt));
+  const entry = fixture.codes[0];
+  const expiry = Date.parse(entry.expiresAt);
+  assert.equal(listCodes(fixture, expiry - 1).active.length, 1);
+  assert.equal(listCodes(fixture, expiry).archive.length, 1);
+  for (const patch of [
+    { sourceUrl:'https://t.me/different-channel/1' },
+    { sourceUrl:'http://t.me/jaiho91official/1' },
+    { expiresAt:'2026-02-30T12:00:00+05:30' },
+    { expiresAt:'2026-01-03T12:00:00' },
+    { code:'  whitespace  ' },
+  ]) {
+    assert.throws(() => validateRegistry({ ...fixture, codes:[{ ...entry, ...patch }] }, expiry));
+  }
+  const withdrawn = { ...fixture, codes:[{ ...entry, withdrawnAt:fixture.lastReviewedAt }] };
+  validateRegistry(withdrawn, Date.parse(fixture.lastReviewedAt));
+  assert.equal(listCodes(withdrawn, expiry - 1).archive.length, 1);
+});
+
+test('stores only daily counts, persists them and prunes the retention window', async t => {
+  const temp = await mkdtemp(join(tmpdir(), 'jaiho91-stats-'));
+  t.after(() => rm(temp, { recursive:true, force:true }));
+  const file = join(temp, 'analytics.sqlite');
+  let now = Date.parse('2026-11-12T20:30:00Z');
+  const paths = new Set(['/', '/codes/']);
+  const open = () => openAnalytics(file, paths, () => now);
+  let analytics = open();
+  try {
+    assert.equal(analytics.record({ path:'/', action:'page_view' }), true);
+    assert.equal(analytics.record({ path:'/', action:'page_view' }), true);
+    assert.equal(analytics.record({ path:'/codes/', action:'copy_code', tier:'VIP 0' }), true);
+    assert.equal(analytics.record({ path:'/codes/', action:'copy_code', tier:'unknown' }), false);
+    assert.equal(analytics.record({ path:'/unknown', action:'page_view' }), false);
+  } finally { analytics.close(); }
+  analytics = open();
+  try {
+    const report = analytics.report(7);
+    assert.equal(report.totals.page_view, 2);
+    assert.equal(report.totals.copy_code, 1);
+    assert.deepEqual(report.daily.at(-1), { day:'2026-11-13', total:2 });
+    assert.equal(report.tiers[0].tier, 'VIP 0');
+    now += 90 * 86_400_000;
+    assert.deepEqual(analytics.report(90).totals, {});
+  } finally { analytics.close(); }
+});
+
+test('production protects the dashboard and accepts only valid same-origin analytics requests', async t => {
+  const temp = await mkdtemp(join(tmpdir(), 'jaiho91-http-'));
+  let child;
+  t.after(async () => {
+    if (child?.exitCode === null && !child.signalCode) {
+      const exited = once(child, 'exit');
+      child.kill();
+      await exited;
+    }
+    await rm(temp, { recursive:true, force:true });
+  });
+  for (const path of ['scripts', 'assets', 'content', 'site.json']) {
+    await cp(join(root, path), join(temp, path), { recursive:true });
+  }
+  const origin = 'https://jaiho91-preview.test';
+  const args = ['scripts/preview.mjs', '--production', '--origin=' + origin];
+  const env = { ...process.env, HOST:'127.0.0.1', PORT:'0', JAIHO_ADMIN_PASSWORD:'', JAIHO_ANALYTICS_DB:join(temp, 'qa.sqlite') };
+  assert.notEqual(spawnSync(process.execPath, args, { cwd:temp, env }).status, 0);
+  const password = 'test-only-dashboard-secret';
+  child = spawn(process.execPath, args, { cwd:temp, env:{ ...env, JAIHO_ADMIN_PASSWORD:password }, stdio:['ignore', 'pipe', 'pipe'] });
+  const lines = createInterface({ input:child.stdout });
+  const address = await new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => reject(new Error('Analytics server did not start')), 5000);
+    child.once('exit', code => {
+      clearTimeout(timeout);
+      reject(new Error('Analytics server exited with code ' + code));
+    });
+    lines.on('line', line => {
+      const url = line.match(/^HTTP server: (http:\/\/\S+)/)?.[1];
+      if (!url) return;
+      clearTimeout(timeout);
+      resolve(url);
+    });
+  });
+  const url = path => new URL(path, address);
+  const adminUrl = url('/_admin/analytics/');
+  const denied = await fetch(adminUrl);
+  assert.equal(denied.status, 401);
+  assert.match(denied.headers.get('www-authenticate'), /^Basic /);
+  const auth = { Authorization:'Basic ' + Buffer.from('admin:' + password).toString('base64') };
+  const event = (headers, body = { path:'/', action:'page_view' }) => fetch(url('/api/events'), {
+    method:'POST', headers:{ 'Content-Type':'application/json', ...headers }, body:JSON.stringify(body),
+  });
+  assert.equal((await event({ Origin:'https://different.test' })).status, 403);
+  assert.equal((await event({ Origin:origin, 'Sec-GPC':'1' })).status, 204);
+  assert.equal((await event({ Origin:origin }, { path:'/missing', action:'page_view' })).status, 400);
+  assert.equal((await event({ Origin:origin }, { path:'/', action:'copy_code', tier:'VIP 0' })).status, 204);
+  assert.equal((await event({ Origin:origin })).status, 204);
+  const response = await fetch(adminUrl, { headers:auth });
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get('cache-control'), 'no-store');
+  const html = await response.text();
+  assert.match(html, /Page views<\/span><strong>1<\/strong>/);
+  assert.match(html, /Successful copies<\/span><strong>1<\/strong>/);
+  assert.equal((await fetch(url('/qa.sqlite'))).status, 404);
+});
+
+test('generates crawlable pages, working internal routes and an empty state with no code data', async t => {
+  const temp = await mkdtemp(join(tmpdir(), 'jaiho91-check-'));
+  t.after(() => rm(temp, { recursive:true, force:true }));
+  for (const path of ['scripts', 'assets', 'content', 'site.json']) {
+    await cp(join(root, path), join(temp, path), { recursive:true });
+  }
+  const run = (...args) => spawnSync(process.execPath, ['scripts/build.mjs', ...args], { cwd:temp, encoding:'utf8' });
+  const runVercel = environment => spawnSync(process.execPath, ['scripts/build.mjs', '--vercel'], {
+    cwd:temp, encoding:'utf8',
+    env:{ ...process.env, VERCEL_ENV:environment, VERCEL_PROJECT_PRODUCTION_URL:'jaiho91-preview.test' },
+  });
+  const page = path => readFile(join(temp, 'dist', path), 'utf8');
+  const emptyRegistry = { ...registry, codes:[] };
+  await writeFile(join(temp, 'content', 'codes.json'), JSON.stringify(emptyRegistry));
+  const preview = run('--origin=');
+  assert.equal(preview.status, 0, preview.stderr);
+  assert.match(await page('index.html'), /noindex,follow/);
+  assert.match(await page('index.html'), /No source-checked code available/);
+  assert.doesNotMatch(await page('index.html'), /class="copy"/);
+  assert.notEqual(run('--origin=', '--production').status, 0);
+
+  const site = 'https://jaiho91-preview.test';
+  const production = run('--production', '--origin=' + site);
+  assert.equal(production.status, 0, production.stderr);
+  assert.match(await page('robots.txt'), /Sitemap: https:\/\/jaiho91-preview\.test\/sitemap\.xml/);
+  const routes = [...(await page('sitemap.xml')).matchAll(/<loc>(.*?)<\/loc>/g)].map(match => new URL(match[1]));
+  assert.equal(routes.length, 10);
+  assert.equal(new Set(routes.map(url => url.pathname)).size, 10);
+  assert.match(await page('404.html'), /noindex,follow/);
+  for (const url of routes) {
+    const html = await page(url.pathname.slice(1) + 'index.html');
+    assert.equal(url.origin, site);
+    assert.ok(html.includes(`rel="canonical" href="${url.href}"`));
+    assert.match(html, /lang="en-IN"/);
+    assert.equal([...html.matchAll(/<h1>/g)].length, 1);
+    const structured = html.match(/<script type="application\/ld\+json">(.*?)<\/script>/s)[1];
+    assert.ok(JSON.parse(structured)['@graph'].some(node => node.url === url.href));
+    for (const match of html.matchAll(/(?:href|src)="(\/[^"]*)"/g)) {
+      const local = new URL(match[1], site).pathname;
+      const file = local.slice(1) + (local.endsWith('/') ? 'index.html' : '');
+      assert.ok((await stat(join(temp, 'dist', file))).isFile(), match[1]);
+    }
+  }
+  const vercelPreview = runVercel('preview');
+  assert.equal(vercelPreview.status, 0, vercelPreview.stderr);
+  assert.match(await page('index.html'), /noindex,follow/);
+  assert.doesNotMatch(await page('sitemap.xml'), /<loc>/);
+  const vercelProduction = runVercel('production');
+  assert.equal(vercelProduction.status, 0, vercelProduction.stderr);
+  assert.match(await page('index.html'), /rel="canonical" href="https:\/\/jaiho91-preview\.test\/"/);
+  assert.match(await page('robots.txt'), /Sitemap: https:\/\/jaiho91-preview\.test\/sitemap\.xml/);
+});

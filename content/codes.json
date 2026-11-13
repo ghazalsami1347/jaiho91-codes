@@ -1,0 +1,49 @@
+{
+  "lastReviewedAt": "2026-11-13T13:16:00+05:30",
+  "sources": {
+    "www.jaiho91.com": "Jaiho91 website",
+    "t.me/s/jaiho91official": "Jaiho91 announcement channel"
+  },
+  "codes": [
+    {
+      "id": "2026-11-13-vip-0",
+      "tier": "VIP 0",
+      "code": "www.91jaiho.com",
+      "sourceUrl": "https://t.me/jaiho91official/728",
+      "publishedAt": "2026-11-13T12:03:26+05:30",
+      "verifiedAt": "2026-11-13T13:16:00+05:30",
+      "expiresAt": "2026-11-14T12:00:00+05:30",
+      "terms": "The announcement lists this entry for VIP 0. The post gives 14 November at noon without a time zone. This tracker interprets the deadline as IST."
+    },
+    {
+      "id": "2026-11-13-vip-1-20",
+      "tier": "VIP 1–20",
+      "code": "91jaiho.com",
+      "sourceUrl": "https://t.me/jaiho91official/728",
+      "publishedAt": "2026-11-13T12:03:26+05:30",
+      "verifiedAt": "2026-11-13T13:16:00+05:30",
+      "expiresAt": "2026-11-14T12:00:00+05:30",
+      "terms": "The announcement lists this entry for VIP 1 through 20. The post gives 14 November at noon without a time zone. This tracker interprets the deadline as IST."
+    },
+    {
+      "id": "nov-12-vip-0",
+      "tier": "VIP 0",
+      "code": "www.jaiho91.com",
+      "sourceUrl": "https://t.me/jaiho91official/723",
+      "publishedAt": "2026-11-12T11:59:57+05:30",
+      "verifiedAt": "2026-11-12T19:29:00+05:30",
+      "expiresAt": "2026-11-13T12:00:00+05:30",
+      "terms": "The announcement lists this entry for VIP 0. The post gives noon as the deadline without a time zone. This tracker displays it in IST."
+    },
+    {
+      "id": "nov-12-vip-1-20",
+      "tier": "VIP 1–20",
+      "code": "91-jaiho.net",
+      "sourceUrl": "https://t.me/jaiho91official/723",
+      "publishedAt": "2026-11-12T11:59:57+05:30",
+      "verifiedAt": "2026-11-12T19:29:00+05:30",
+      "expiresAt": "2026-11-13T12:00:00+05:30",
+      "terms": "The announcement lists this entry for VIP 1 through 20. The post gives noon as the deadline without a time zone. This tracker displays it in IST."
+    }
+  ]
+}
