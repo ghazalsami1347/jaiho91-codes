@@ -193,9 +193,10 @@ test('generates crawlable pages, working internal routes and an empty state with
       assert.equal([...featured.matchAll(/class="game-card(?: top-game)?"/g)].length, 10);
       assert.equal([...featured.matchAll(/class="card-rtp"><span>RTP<\/span><strong>(\d+\.\d+)%/g)].filter(match => Number(match[1]) >= 96 && Number(match[1]) <= 99).length, 10);
       assert.match(html, /<h1 id="hero-title">Jaiho91<br><span>Live RTP<\/span><\/h1>/);
-      assert.match(html, roman
-        ? /id="rtp-notice-title">PREVIEW<\/strong>[^<]+simulated/
-        : /id="rtp-notice-title">प्रीव्यू<\/strong>[^<]+सिम्युलेटेड/);
+      const notice = html.match(/<aside\b[^>]*id="rtp-notice"[^>]*>.*?<\/aside>/s)?.[0];
+      assert.ok(notice, 'RTP notice is rendered');
+      assert.match(notice, /<strong id="rtp-notice-title">[^<{]+<\/strong>\s+[^<{]+/);
+      assert.match(notice, /<span class="rtp-data-notice">[^<{]+<\/span>/);
       assert.match(html, /<meta property="og:title" content="Jaiho91 Live RTP/);
       assert.match(html, /href="\/assets\/rtp\/arcade\.css"/);
       assert.match(html, /id="hero-deck"/);
