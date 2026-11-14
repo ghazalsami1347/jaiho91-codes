@@ -48,7 +48,7 @@ function renderDialog(id) {
   const game = ranked.find(game => game.id === id);
   if (!game) return;
   dialogGameId = id;
-  $('#dialog-content').innerHTML = `${artwork(game,'dialog-art','dialog',true)}<span class="eyebrow">${escape(themeLabel(game.theme))} / ${escape(ui.rank)} #${game.rank}</span><h2 id="dialog-title">${escape(game.name)}</h2><div class="dialog-value"><span>RTP</span><strong>${percent(game.basisPoints)}</strong></div><p id="dialog-preview">${escape(ui.preview)}</p><p>${escape(ui.updated)} · ${escape($('#cycle-date').textContent)}</p>${game.description?'<p lang="en">'+escape(game.description)+'</p>':''}<button type="button" class="secondary" data-save="${game.id}" aria-pressed="${saved.has(game.id)}">${icon('bookmark')} ${escape(saved.has(game.id) ? ui.saved : ui.save)}</button>`;
+  $('#dialog-content').innerHTML = `${artwork(game,'dialog-art','dialog',true)}<span class="rtp-eyebrow">${escape(themeLabel(game.theme))} / ${escape(ui.rank)} #${game.rank}</span><h2 id="dialog-title">${escape(game.name)}</h2><div class="dialog-value"><span>RTP</span><strong>${percent(game.basisPoints)}</strong></div><p id="dialog-preview">${escape(ui.preview)}</p><p>${escape(ui.updated)} · ${escape($('#cycle-date').textContent)}</p>${game.description?'<p lang="en">'+escape(game.description)+'</p>':''}<button type="button" class="secondary" data-save="${game.id}" aria-pressed="${saved.has(game.id)}">${icon('bookmark')} ${escape(saved.has(game.id) ? ui.saved : ui.save)}</button>`;
 }
 function onCycle(nextCycle) {
   const changed = Boolean(cycle);

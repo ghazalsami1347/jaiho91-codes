@@ -178,6 +178,16 @@ test('generates crawlable pages, working internal routes and an empty state with
     assert.ok(html.includes('hreflang="hi-IN" href="' + site + hindiPath + '"'));
     assert.ok(html.includes('hreflang="hi-Latn-IN" href="' + site + '/hi_en' + hindiPath + '"'));
     assert.ok(html.includes('hreflang="x-default" href="' + site + hindiPath + '"'));
+    const header = html.match(/<header class="site-header">.*?<\/header>/s)[0];
+    const primary = header.match(/<div class="primary-nav">(.*?)<\/div>/s)[1];
+    const prefix = roman ? '/hi_en' : '';
+    for (const section of ['/rtp/', '/codes/']) {
+      const current = section === hindiPath ? ' aria-current="page"' : '';
+      assert.ok(primary.includes('href="' + prefix + section + '"' + current + '>'));
+    }
+    assert.match(header, /aria-controls="utility-nav"/);
+    assert.match(header, /class="language-switch"/);
+    assert.match(html, /<footer class="site-footer">/);
     if (hindiPath === '/rtp/') {
       const featured = html.split('<div id="games"')[1].split('<div id="empty"')[0];
       assert.equal([...featured.matchAll(/class="game-card(?: top-game)?"/g)].length, 10);

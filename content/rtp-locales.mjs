@@ -1,14 +1,6 @@
 // Phrases from the original arcade template, in Hindi and Roman Hindi.
 export const arcadeStrings = {
-  'Skip to games':['गेम सूची पर जाएँ','Game list par jaayein'],
-  'Jaiho91 home':['Jaiho91 होम','Jaiho91 home'],
-  'RTP updates · 12 PM IST':['RTP अपडेट · दोपहर 12 बजे IST','RTP update · dopahar 12 baje IST'],
-  'Main navigation':['मुख्य नेविगेशन','Navigation'],
-  '>Games<':['>गेम<','>Games<'],
   'RTP explained':['RTP के बारे में','RTP ke baare mein'],
-  'Download the Jaiho91 Android app (APK)':['Jaiho91 Android ऐप (APK) डाउनलोड करें','Jaiho91 Android app (APK) download karein'],
-  '> Download App<':['> ऐप डाउनलोड करें<','> App download karein<'],
-  '> Download<':['> डाउनलोड<','> Download<'],
   'DAILY GAME LIST':['रोज़ की गेम सूची','ROZ KI GAME LIST'],
   ' Jaiho91 games, sorted by RTP.<br>The list changes daily at 12 PM IST.':[
     ' Jaiho91 गेम, RTP के क्रम में।<br>सूची हर दिन दोपहर 12 बजे IST पर बदलती है।',
@@ -79,8 +71,6 @@ export const arcadeStrings = {
     'ये कवर गेम सूची और स्क्रीनशॉट देखकर बनाए गए हैं। ऐप की तस्वीरें अलग हो सकती हैं।',
     'Yeh covers game list aur screenshots dekh kar banaye gaye hain. App ki tasveerein alag ho sakti hain.',
   ],
-  'Jaiho91 game list · Daily update at 12 PM IST.':['Jaiho91 गेम सूची · रोज़ दोपहर 12 बजे IST पर अपडेट।','Jaiho91 game list · roz dopahar 12 baje IST par update.'],
-  'Back to top':['ऊपर जाएँ','Upar jaayein'],
   'Close game details':['गेम की जानकारी बंद करें','Game ki jankari band karein'],
   'The cards above are a preview. Enable JavaScript for today’s lineup, search and saved games.':[
     'ऊपर पिछले बिल्ड की सूची है। आज की सूची, खोज और पसंदीदा के लिए JavaScript चालू करें।',

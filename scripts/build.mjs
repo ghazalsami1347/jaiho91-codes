@@ -74,7 +74,7 @@ const paths = {
 };
 const icon = name => `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${paths[name]}"/></svg>`;
 const guideLink = guide => `/guides/${guide.slug}/`;
-const brand = l => `<a href="${pathFor(l, '/')}" class="brand" aria-label="Jaiho91 Codes · ${l.home}"><img src="/assets/mark.png" alt="" width="38" height="38"><span>Jaiho<span class="brand-number">91</span><small>CODES</small></span></a>`;
+const brand = l => `<a href="${pathFor(l, '/')}" class="brand" aria-label="Jaiho91 · ${l.home}"><img src="/assets/mark.png" alt="" width="38" height="38"><span>Jaiho<span class="brand-number">91</span></span></a>`;
 const sourceChannel = 'https://t.me/s/jaiho91official';
 const apkUrl = 'https://d1i9jwkbb2057y.cloudfront.net/jaiho91_SEO_6BV0FPZR264.apk';
 const androidPath = '/guides/android-app/';
@@ -101,8 +101,8 @@ function layout(l, { path, title, description, body, article, breadcrumb, lastmo
     ...(lastmod ? {dateModified:lastmod} : {}),
   };
   const graph = [
-    { '@type':'Organization', '@id':publisherId, name:'Jaiho91 Codes', url:absolute('/about/') },
-    { '@type':'WebSite', '@id':siteId, url:absolute('/'), name:'Jaiho91 Codes', inLanguage:Object.values(locales).map(locale => locale.lang), publisher:{'@id':publisherId} },
+    { '@type':'Organization', '@id':publisherId, name:'Jaiho91', url:absolute('/about/') },
+    { '@type':'WebSite', '@id':siteId, url:absolute('/'), name:'Jaiho91', inLanguage:Object.values(locales).map(locale => locale.lang), publisher:{'@id':publisherId} },
     page,
   ];
   if (article) graph.push({
@@ -123,8 +123,9 @@ function layout(l, { path, title, description, body, article, breadcrumb, lastmo
     const target = pathFor(locale, index ? path : '/');
     return `<a href="${target}" lang="${locale.lang}"${locale === l ? ' aria-current="true"' : ''}>${locale.label}</a>`;
   }).join('');
-  const links = [['/rtp/', rtpCopy(l).short], ['/codes/', l.codes], [androidPath, l.android], ['/tutorials/', l.tutorials], ['/guides/', l.guides]];
-  const navLinks = links.map(([href, label]) => `<a href="${pathFor(l, href)}"${href === path ? ' aria-current="page"' : ''}>${label}</a>`).join('');
+  const primary = [['/rtp/', rtpCopy(l).short], ['/codes/', l.codes]];
+  const utility = [[androidPath, l.android], ['/tutorials/', l.tutorials], ['/guides/', l.guides]];
+  const navLinks = links => links.map(([href, label]) => `<a href="${pathFor(l, href)}"${href === path ? ' aria-current="page"' : ''}>${label}</a>`).join('');
   const feedback = Object.fromEntries(['expired','copy','copied','selected','noTier','showing','copiedFor','copyFallback','found'].map(key => [key, l[key]]));
   return `<!doctype html>
 <html lang="${l.lang}">
@@ -139,7 +140,7 @@ ${canIndex ? `<link rel="canonical" href="${h(url)}">
 ${alternate}` : ''}
 <meta property="og:type" content="${article ? 'article' : 'website'}">
 <meta property="og:locale" content="hi_IN">
-<meta property="og:site_name" content="Jaiho91 Codes">
+<meta property="og:site_name" content="Jaiho91">
 <meta property="og:title" content="${h(title)}">
 <meta property="og:description" content="${h(description)}">
 ${origin ? `<meta property="og:url" content="${h(url)}">` : ''}
@@ -154,28 +155,30 @@ ${origin ? `<meta property="og:url" content="${h(url)}">` : ''}
 <meta name="twitter:image" content="${socialImage}">
 <meta name="twitter:image:alt" content="${h(l.footer)}">
 <link rel="icon" href="/assets/mark.png" type="image/png" sizes="76x76">
+<link rel="preload" href="/assets/manrope.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.css">
+<script type="module" src="/assets/site.js"></script>
 ${arcade ? `<link rel="stylesheet" href="/assets/rtp/arcade.css">
 <link rel="stylesheet" href="/assets/rtp/integration.css">
-<script type="module" src="/assets/rtp/app.js"></script>
-<script type="module" src="/assets/analytics-client.js"></script>` : `<link rel="preload" href="/assets/manrope.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/site.css">
-<script type="module" src="/assets/site.js"></script>`}
+<script type="module" src="/assets/rtp/app.js"></script>` : ''}
 ${canIndex ? `<script type="application/ld+json">${schema({'@context':'https://schema.org','@graph':graph})}</script>` : ''}
 </head>
 <body data-ui="${h(JSON.stringify(feedback))}"${analytics && index ? ' data-analytics' : ''}>
-${arcade ? body : `
 <a class="skip" href="#main">${l.skip}</a>
 <header class="site-header"><div class="wrap header-inner">
 ${brand(l)}
-<button class="menu-button" type="button" hidden aria-expanded="false" aria-controls="nav" aria-label="${l.menu}">${icon('menu')}</button>
-<nav id="nav" aria-label="${l.prefix ? 'Main navigation' : 'मुख्य नेविगेशन'}">${navLinks}</nav>
+<button class="menu-button" type="button" hidden aria-expanded="false" aria-controls="utility-nav" aria-label="${l.menu}">${icon('menu')}</button>
+<nav id="nav" aria-label="${l.prefix ? 'Main navigation' : 'मुख्य नेविगेशन'}">
+<div class="primary-nav">${navLinks(primary)}</div>
+<div class="utility-nav" id="utility-nav">${navLinks(utility)}</div>
+</nav>
 <nav class="language-switch" aria-label="${l.prefix ? 'Bhasha' : 'भाषा'}">${languageSwitch}</nav>
 </div></header>
 ${path === '/' || path === androidPath ? installPopup(l) : ''}
 <main id="main" tabindex="-1">${body}</main>
 <footer class="site-footer"><div class="wrap footer-grid"><div>${brand(l)}<p>${l.footer}</p></div>
-<nav aria-label="${l.prefix ? 'Footer links' : 'फ़ुटर लिंक'}">${navLinks}<a href="${pathFor(l, '/about/')}">${l.about}</a><a href="${pathFor(l, '/privacy/')}">${l.privacy}</a></nav></div>
-<div class="wrap footer-bottom"><span>Jaiho91 Codes · ${l.india}</span><span>${l.adults}</span></div></footer>`}
+<nav aria-label="${l.prefix ? 'Footer links' : 'फ़ुटर लिंक'}">${navLinks([...primary, ...utility])}<a href="${pathFor(l, '/about/')}">${l.about}</a><a href="${pathFor(l, '/privacy/')}">${l.privacy}</a></nav></div>
+<div class="wrap footer-bottom"><span>Jaiho91 · ${l.india}</span><span>${l.adults}</span></div></footer>
 </body>
 </html>
 `;
@@ -240,17 +243,17 @@ function localizedPages(l) {
   const homeTitle = l.prefix ? 'Jaiho91 RTP, Promo Codes aur Android APK' : 'Jaiho91 RTP, प्रोमो कोड और Android APK';
   const result = [{
     path:'/', title:homeTitle, description:l.heroMeta, lastmod,
-    body:`<section class="hero"><div class="wrap hero-grid"><div class="hero-copy"><p class="eyebrow"><span></span> ${l.trackerLabel}</p>
-<h1>Jaiho91 <em>${l.heroTitle}</em></h1><p class="hero-description">${l.heroIntro}</p>
-<div class="hero-actions">${downloadButton(l)}<a class="button secondary" href="#code-status" data-track="check_codes">${l.check} ${icon('arrow')}</a></div>
-<div class="hero-help"><a class="text-link" href="${pathFor(l, '/rtp/')}">${rtp.link} ${icon('arrow')}</a><a class="text-link" href="${pathFor(l, tutorialsPath)}">${l.tutorialLink} ${icon('arrow')}</a></div></div>
+    body:`<section class="hero"><div class="wrap hero-grid"><div class="hero-copy">
+<h1>Jaiho91</h1><p class="hero-description">${l.heroIntro}</p>
+<div class="hero-actions"><a class="button" href="${pathFor(l, '/rtp/')}">${rtp.short} ${icon('arrow')}</a><a class="button secondary" href="${pathFor(l, '/codes/')}" data-track="check_codes">${l.codes} ${icon('arrow')}</a></div>
+<div class="hero-help"><a class="text-link" href="${h(apkUrl)}" data-track="download_apk" rel="external noreferrer">${icon('download')} ${l.download}</a><a class="text-link" href="${pathFor(l, tutorialsPath)}">${l.tutorialLink} ${icon('arrow')}</a></div></div>
 <div class="hero-art" aria-hidden="true"><span class="orbit orbit-one"></span><span class="orbit orbit-two"></span><span class="spark spark-one">✦</span><span class="spark spark-two">✦</span><span class="spark spark-three">✧</span><img src="/assets/jaiho91-badge.webp" srcset="/assets/jaiho91-badge-small.webp 420w, /assets/jaiho91-badge.webp 720w" sizes="(max-width: 640px) 135px, 344px" alt="" width="720" height="720" decoding="async"></div></div></section>
 ${tracker(l)}
 <section class="section guide-section"><div class="wrap"><div class="section-heading"><div><h2>${l.guideTitle}</h2><p>${l.guideHomeIntro}</p></div><a class="text-link" href="${pathFor(l, '/guides/')}">${l.allGuides} ${icon('arrow')}</a></div><div class="guide-grid">${guides.slice(0,3).map(guide => guideCard(l, guide)).join('')}</div></div></section>
 <section class="wrap section faq"><div><h2>${l.questions}</h2><p>${l.questionsIntro}</p></div><div>${l.faq.map(([question, answer]) => `<details><summary>${h(question)}</summary><p>${h(answer)}</p></details>`).join('')}</div></section>`,
   }, {
     path:'/rtp/', title:rtp.title + ' | Jaiho91', breadcrumb:rtp.short, description:rtp.description,
-    body:rtpBody(rtpTemplate, l, games, h, now, apkUrl),
+    body:rtpBody(rtpTemplate, l, games, h, now),
   }, {
     path:'/codes/', title:l.codeTitle + ' | Jaiho91 Codes', breadcrumb:l.codes, description:l.codeMeta, lastmod,
     body:`${pageIntro(l, l.codes, l.codeTitle, l.codeIntro)}${tracker(l, true)}

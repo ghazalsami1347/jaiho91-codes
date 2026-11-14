@@ -1,7 +1,7 @@
 import { track } from './analytics-client.js';
 
 const menu = document.querySelector('.menu-button');
-const nav = document.querySelector('#nav');
+const nav = document.querySelector('#utility-nav');
 const ui = JSON.parse(document.body.dataset.ui);
 nav.dataset.collapsible = '';
 menu.hidden = false;

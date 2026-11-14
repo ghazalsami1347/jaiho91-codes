@@ -1,23 +1,13 @@
-<a class="skip" href="#catalog">Skip to games</a>
-  <header class="header">
-    <div class="wrap header-inner">
-      <a class="brand" href="{{home}}" aria-label="Jaiho91 home"><img src="/assets/rtp/jaiho91-logo-128.webp" alt="Jaiho91" width="64" height="64"><span><strong>Jaiho91</strong><small>RTP updates · 12 PM IST</small></span></a>
-      <nav aria-label="Main navigation"><a class="nav-active" href="#catalog">Games</a><a href="#about">RTP explained</a></nav>
-      <a class="download-btn download-btn-header" href="{{apk}}" data-track="download_apk" download rel="noopener" aria-label="Download the Jaiho91 Android app (APK)"><span data-icon="download"></span> Download</a>
-      <span class="status-badge">LIVE RTP</span>
-    </div>
-  </header>
-  <nav class="wrap rtp-site-links" aria-label="{{navLabel}}">{{siteLinks}}</nav>
-  <main class="wrap" data-rtp-ui="{{ui}}">
+<div class="wrap rtp-arcade" data-rtp-ui="{{ui}}">
     <aside class="rtp-preview" id="rtp-notice" aria-labelledby="rtp-notice-title"><span data-icon="info" aria-hidden="true"></span><p><strong id="rtp-notice-title">{{noticeLabel}}</strong> {{notice}}</p></aside>
-    <section class="hero" aria-labelledby="hero-title" aria-describedby="rtp-notice">
-      <div class="hero-copy">
-        <div class="eyebrow">DAILY GAME LIST <span class="edition" id="edition">IST / DAILY</span></div>
+    <section class="rtp-hero" aria-labelledby="hero-title" aria-describedby="rtp-notice">
+      <div class="rtp-hero-copy">
+        <div class="rtp-eyebrow">DAILY GAME LIST <span class="edition" id="edition">IST / DAILY</span></div>
         <h1 id="hero-title">Jaiho91<br><span>Live RTP</span></h1>
         <p><span id="intro-count">10</span> Jaiho91 games, sorted by RTP.<br>The list changes daily at 12 PM IST.</p>
-        <div class="hero-actions">
+        <div class="rtp-hero-actions">
           <a class="primary" href="#catalog">See today’s lineup <span data-icon="arrow"></span></a>
-          <a class="download-btn" href="{{apk}}" data-track="download_apk" download rel="noopener" aria-label="Download the Jaiho91 Android app (APK)"><span data-icon="download"></span> Download App</a>
+          <a class="secondary" href="#about">RTP explained</a>
         </div>
       </div>
       <div class="hero-summary" aria-label="Catalog summary">
@@ -30,9 +20,9 @@
       <div class="cycle-info"><span data-icon="clock"></span><div><strong>Resets daily</strong><span>12 PM Indian Standard Time</span></div></div>
       <div class="countdown-block"><span class="small-label">NEXT UPDATE IN</span><time id="countdown" role="timer" aria-label="Time until the next daily reset">--:--:--</time><span class="time-units" aria-hidden="true">HOURS&nbsp;&nbsp; / &nbsp;&nbsp;MIN&nbsp;&nbsp; / &nbsp;&nbsp;SEC</span></div>
     </section>
-    <section class="leaders-section" aria-labelledby="leaders-title"><div class="section-heading"><div><span class="spotlight-kicker">RANKED BY RTP</span><h2 id="leaders-title">Today’s <em>top 3.</em></h2></div><span class="muted podium-note">Daily reset at 12 PM IST.</span></div><div id="leaders" class="leaders"><p class="muted">Loading the game list…</p></div></section>
+    <section class="leaders-section" aria-labelledby="leaders-title"><div class="rtp-section-heading"><div><span class="spotlight-kicker">RANKED BY RTP</span><h2 id="leaders-title">Today’s <em>top 3.</em></h2></div><span class="muted podium-note">Daily reset at 12 PM IST.</span></div><div id="leaders" class="leaders"><p class="muted">Loading the game list…</p></div></section>
     <section id="catalog" class="catalog-section" aria-labelledby="catalog-title">
-      <div class="section-heading"><h2 id="catalog-title">Today’s top games <span class="collection-count">10</span></h2><span class="muted sort-label">RTP: high to low <span data-icon="down"></span></span></div>
+      <div class="rtp-section-heading"><h2 id="catalog-title">Today’s top games <span class="collection-count">10</span></h2><span class="muted sort-label">RTP: high to low <span data-icon="down"></span></span></div>
       <div class="catalog-tools" hidden><div class="toolbar"><label class="search"><span data-icon="search"></span><span class="sr-only">Search today’s games</span><input id="search" aria-label="Search today’s games" type="search" placeholder="Search game name" autocomplete="off"><kbd aria-hidden="true">/</kbd></label><button id="saved-filter" class="saved-filter" type="button" aria-pressed="false"><span data-icon="bookmark"></span> Saved <span id="saved-count">0</span></button></div>
       <div class="filter-row"><div class="filters" id="filters" role="group" aria-label="Filter by artwork theme"></div><span id="results-count" class="muted" role="status" aria-live="polite"></span></div>
       </div><p class="catalog-note">Tap a cover for details. Use the bookmark to save a game.</p>
@@ -42,7 +32,7 @@
       <div id="empty" class="empty" hidden><span data-icon="search"></span><h3>No games found</h3><p>Try another name or clear the filters.</p><button id="clear-filters" class="primary" type="button">Clear filters</button></div>
       <div id="error" class="empty" hidden><h3>The games could not be loaded.</h3><p id="catalog-error-message">Check games.json and try again.</p><button id="retry" class="primary" type="button">Try again</button></div>
     </section>
-    <section id="about" class="about" aria-labelledby="about-title">
+    <section id="about" class="rtp-about" aria-labelledby="about-title">
       <div class="about-intro"><h2 id="about-title">How this RTP<br>list works</h2><p>Jaiho91 game information with daily updates in Indian Standard Time.</p></div>
       <div class="about-details">
         <details><summary>How are the games ranked?</summary><p>The daily list shows up to 10 games, ranked by simulated RTP from 96% to 99%. Search and filters apply to today’s lineup.</p></details>
@@ -52,8 +42,7 @@
         <details><summary>Are the covers the same as in the app?</summary><p>The game covers are recreated artwork based on the supplied game list and screenshots. They may differ from the images shown in the app.</p></details>
       </div>
     </section>
-  </main>
-  <footer class="wrap footer"><a class="footer-brand" href="{{home}}"><img src="/assets/rtp/jaiho91-logo-128.webp" alt="Jaiho91" width="40" height="40"><span>Jaiho91 RTP</span></a><p>Jaiho91 game list · Daily update at 12 PM IST.</p><a href="#hero-title">Back to top <span data-icon="up"></span></a></footer>
   <div id="announcer" class="sr-only" role="status" aria-live="polite"></div>
   <dialog id="game-dialog" aria-labelledby="dialog-title" aria-describedby="dialog-preview"><button id="dialog-close" class="dialog-close" type="button" aria-label="Close game details"><span data-icon="close"></span></button><div id="dialog-content"></div></dialog>
   <noscript><div class="noscript">The cards above are a preview. Enable JavaScript for today’s lineup, search and saved games.</div></noscript>
+</div>

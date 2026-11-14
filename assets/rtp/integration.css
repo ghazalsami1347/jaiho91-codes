@@ -1,8 +1,8 @@
-.rtp-site-links{display:flex;flex-wrap:wrap;gap:0 16px;align-items:center;margin-top:7px;font-size:12px}
-.rtp-site-links a{display:inline-flex;align-items:center;min-height:44px;color:#dfc5e2}
-.rtp-site-links a:hover,.rtp-site-links a[aria-current]{color:#f7ca84;text-decoration:underline;text-underline-offset:4px}
-.rtp-preview{display:flex;align-items:flex-start;gap:9px;margin-top:8px;padding:12px 14px;border:1px solid #a87b45;border-radius:5px;background:#302116;color:#f6dfc4}
-.rtp-preview p{margin:0;font-size:13px;line-height:1.5}
+.rtp-arcade{font-size:14px;line-height:1.55}
+.rtp-arcade button{border:0;color:inherit}
+.rtp-arcade .rtp-hero h1{font-family:inherit;font-size:clamp(2.55rem,6vw,5.7rem);font-weight:800;line-height:1.04;letter-spacing:-.06em;text-transform:none;text-shadow:none}
+.rtp-arcade .rtp-section-heading h2,.rtp-arcade .rtp-about h2{font-family:inherit;font-weight:800;line-height:1.2}
+.rtp-preview{display:flex;align-items:flex-start;gap:9px;margin-top:18px;padding:12px 14px;border:1px solid #a87b45;border-radius:8px;background:#302116;color:#f6dfc4}
+.rtp-preview p{margin:0;color:inherit;font-size:13px;line-height:1.5}
 .rtp-preview strong{margin-inline-end:5px;color:#ffd493}
 .rtp-preview .icon{width:16px;height:16px;margin-top:2px;color:#ffd493}
-.hero-actions{flex-wrap:wrap}
