@@ -265,4 +265,24 @@ test('generates crawlable pages, working internal routes and an empty state with
   assert.equal(vercelProduction.status, 0, vercelProduction.stderr);
   assert.match(await page('index.html'), /rel="canonical" href="https:\/\/jaiho91-preview\.test\/"/);
   assert.match(await page('robots.txt'), /Sitemap: https:\/\/jaiho91-preview\.test\/sitemap\.xml/);
+
+  const settingsFile = join(temp, 'content', 'rtp.json');
+  const settings = JSON.parse(await readFile(settingsFile, 'utf8'));
+  settings.notice.hi.text = 'नई सूचना $&';
+  settings.notice.hi_en.text = 'Nayi soochna';
+  settings.percentages = { 'super-ace-1':95.25, 'power-of-the-kraken-1':98.75 };
+  await writeFile(settingsFile, JSON.stringify(settings));
+  const manual = run('--production', '--origin=' + site);
+  assert.equal(manual.status, 0, manual.stderr);
+  for (const [file, message] of [['rtp/index.html', 'नई सूचना $&amp;'], ['hi_en/rtp/index.html', 'Nayi soochna']]) {
+    const html = await page(file);
+    const cards = [...html.matchAll(/class="card-rtp"><span>RTP<\/span><strong>([^<]+)/g)].map(match => match[1]);
+    assert.deepEqual(cards, ['98.75%', '95.25%']);
+    assert.ok(html.includes(message));
+    assert.doesNotMatch(html, /class="rtp-data-notice">/);
+    assert.match(html, /class="cycle-bar"[^>]+ hidden>/);
+  }
+  const manualGames = JSON.parse(await page('assets/rtp/games.json'));
+  assert.deepEqual(Object.fromEntries(manualGames.filter(game => game.basisPoints !== undefined)
+    .map(game => [game.id, game.basisPoints])), { 'super-ace-1':9525, 'power-of-the-kraken-1':9875 });
 });

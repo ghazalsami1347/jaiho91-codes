@@ -57,6 +57,13 @@ export function rankFeaturedGames(games, cycleKey) {
     basisPoints: Math.round(ceiling - (game.rank - 1) * (ceiling - floor) / (TOP_GAME_COUNT - 1))
   }));
 }
+export function featuredGames(games, cycleKey) {
+  if (!games.some(game => game.basisPoints !== undefined)) return rankFeaturedGames(games, cycleKey);
+  return games.filter(game => game.basisPoints !== undefined)
+    .sort((a, b) => b.basisPoints - a.basisPoints || a.id.localeCompare(b.id, 'en'))
+    .slice(0, TOP_GAME_COUNT)
+    .map((game, index) => ({ ...game, rank:index + 1 }));
+}
 export const percent = bp => (bp / 100).toFixed(2) + '%';
 export function filterGames(games, query = '', theme = 'all', savedOnly = false, saved = new Set()) {
   const normalized = query.trim().toLowerCase();

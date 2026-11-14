@@ -1,13 +1,13 @@
 <div class="wrap rtp-arcade" data-rtp-ui="{{ui}}">
     <aside class="rtp-preview" id="rtp-notice" aria-labelledby="rtp-notice-title">
       <span data-icon="info" aria-hidden="true"></span>
-      <p><strong id="rtp-notice-title">{{noticeLabel}}</strong> {{notice}} <span class="rtp-data-notice">{{dataNotice}}</span></p>
+      <p><strong id="rtp-notice-title">{{noticeLabel}}</strong> {{notice}} {{dataNotice}}</p>
     </aside>
     <section class="rtp-hero" aria-labelledby="hero-title" aria-describedby="rtp-notice">
       <div class="rtp-hero-copy">
-        <div class="rtp-eyebrow">DAILY GAME LIST <span class="edition" id="edition">IST / DAILY</span></div>
+        <div class="rtp-eyebrow"{{demoOnly}}>DAILY GAME LIST <span class="edition" id="edition">IST / DAILY</span></div>
         <h1 id="hero-title">Jaiho91<br><span>Live RTP</span></h1>
-        <p><span id="intro-count">10</span> Jaiho91 games, sorted by RTP.<br>The list changes daily at 12 PM IST.</p>
+        <p><span id="intro-count">{{count}}</span> Jaiho91 games, sorted by RTP.<br{{demoOnly}}><span{{demoOnly}}>The list changes daily at 12 PM IST.</span></p>
         <div class="rtp-hero-actions">
           <a class="primary" href="#catalog">See today’s lineup <span data-icon="arrow"></span></a>
           <a class="secondary" href="#about">RTP explained</a>
@@ -15,17 +15,17 @@
       </div>
       <div class="hero-summary" aria-label="Catalog summary">
         <div id="hero-deck" class="hero-deck" aria-hidden="true"></div>
-        <div class="hero-mini"><div><strong id="total-games">10</strong><span>JAIHO91<br>GAMES</span></div><span>DAILY RESET<br>12 PM IST</span></div>
+        <div class="hero-mini"><div><strong id="total-games">{{count}}</strong><span>JAIHO91<br>GAMES</span></div><span{{demoOnly}}>DAILY RESET<br>12 PM IST</span></div>
       </div>
     </section>
-    <section class="cycle-bar" aria-label="Daily reset information">
+    <section class="cycle-bar" aria-label="Daily reset information"{{demoOnly}}>
       <div class="cycle-date"><span class="small-label">LAST UPDATED</span><strong id="cycle-date">Daily update at 12 PM IST</strong></div>
       <div class="cycle-info"><span data-icon="clock"></span><div><strong>Resets daily</strong><span>12 PM Indian Standard Time</span></div></div>
       <div class="countdown-block"><span class="small-label">NEXT UPDATE IN</span><time id="countdown" role="timer" aria-label="Time until the next daily reset">--:--:--</time><span class="time-units" aria-hidden="true">HOURS&nbsp;&nbsp; / &nbsp;&nbsp;MIN&nbsp;&nbsp; / &nbsp;&nbsp;SEC</span></div>
     </section>
-    <section class="leaders-section" aria-labelledby="leaders-title"><div class="rtp-section-heading"><div><span class="spotlight-kicker">RANKED BY RTP</span><h2 id="leaders-title">Today’s <em>top 3.</em></h2></div><span class="muted podium-note">Daily reset at 12 PM IST.</span></div><div id="leaders" class="leaders"><p class="muted">Loading the game list…</p></div></section>
+    <section class="leaders-section" aria-labelledby="leaders-title"><div class="rtp-section-heading"><div><span class="spotlight-kicker">RANKED BY RTP</span><h2 id="leaders-title">Today’s <em>top 3.</em></h2></div><span class="muted podium-note"{{demoOnly}}>Daily reset at 12 PM IST.</span></div><div id="leaders" class="leaders"><p class="muted">Loading the game list…</p></div></section>
     <section id="catalog" class="catalog-section" aria-labelledby="catalog-title">
-      <div class="rtp-section-heading"><h2 id="catalog-title">Today’s top games <span class="collection-count">10</span></h2><span class="muted sort-label">RTP: high to low <span data-icon="down"></span></span></div>
+      <div class="rtp-section-heading"><h2 id="catalog-title">Today’s top games <span class="collection-count">{{count}}</span></h2><span class="muted sort-label">RTP: high to low <span data-icon="down"></span></span></div>
       <div class="catalog-tools" hidden><div class="toolbar"><label class="search"><span data-icon="search"></span><span class="sr-only">Search today’s games</span><input id="search" aria-label="Search today’s games" type="search" placeholder="Search game name" autocomplete="off"><kbd aria-hidden="true">/</kbd></label><button id="saved-filter" class="saved-filter" type="button" aria-pressed="false"><span data-icon="bookmark"></span> Saved <span id="saved-count">0</span></button></div>
       <div class="filter-row"><div class="filters" id="filters" role="group" aria-label="Filter by artwork theme"></div><span id="results-count" class="muted" role="status" aria-live="polite"></span></div>
       </div><p class="catalog-note">Tap a cover for details. Use the bookmark to save a game.</p>

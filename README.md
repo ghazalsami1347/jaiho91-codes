@@ -6,9 +6,11 @@ The public site defaults to Hindi. The Roman Hindi edition mirrors it under `/hi
 
 ## RTP catalogue
 
-The Hindi and Roman Hindi Live RTP preview pages are `/rtp/` and `/hi_en/rtp/`. Both use the original arcade template, artwork, podium and details dialog from [Jaiho91-rtp](https://github.com/ghazalsami1347/jaiho91-rtp). The preview strip explains that the 96% to 99% values are simulated until the data feed is connected. The podium highlights three games from the daily top ten. The lineup resets at noon IST using the visitor's device clock. Search and favourites filter the current lineup. Favourites are stored in the visitor's browser.
+Open [content/rtp.json](content/rtp.json) to edit both languages' notice or publish RTP percentages. In `percentages`, use a game ID from [content/rtp-games.json](content/rtp-games.json) and its verified number without the percent sign. For example, the format is `"super-ace-1": 96.25`. Use the provider's value when publishing. Commit to `main` and GitHub Pages rebuilds both languages.
 
-Edit `content/rtp-games.json` and rebuild to publish catalogue changes. Store WebP covers in `assets/rtp/games/`. Use the game ID and a size suffix of `-128.webp`, `-320.webp` or `-640.webp`. The language strings are in `content/rtp-locales.mjs`.
+When `percentages` contains entries, the site shows up to ten of those games sorted highest first. The notice remains and the simulation label and countdown disappear. The list updates on each publish. An empty `{}` restores the labeled demo, which rotates daily at noon IST.
+
+The catalogue uses the original artwork, podium and details dialog from [Jaiho91-rtp](https://github.com/ghazalsami1347/jaiho91-rtp). To add games, edit `content/rtp-games.json` and store WebP covers in `assets/rtp/games/`. Use the game ID and a size suffix of `-128.webp`, `-320.webp` or `-640.webp`.
 
 ## Edit tutorials and translations
 

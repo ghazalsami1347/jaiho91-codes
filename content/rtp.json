@@ -1,0 +1,13 @@
+{
+  "notice": {
+    "hi": {
+      "label": "RTP की जानकारी",
+      "text": "RTP बताता है कि लंबे समय में खेली गई कुल राशि का कितना प्रतिशत औसतन वापस मिलने की उम्मीद होती है। RTP ज़्यादा होने पर भी आप किसी भी राउंड में हार सकते हैं।"
+    },
+    "hi_en": {
+      "label": "RTP ki jaankari",
+      "text": "RTP batata hai ki lambe samay mein kheli gayi kul rakam ka kitna percent ausat mein wapas milne ki ummeed hoti hai. RTP zyada hone par bhi aap kisi bhi round mein haar sakte hain."
+    }
+  },
+  "percentages": {}
+}

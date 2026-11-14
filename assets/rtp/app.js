@@ -1,4 +1,4 @@
-import { rankFeaturedGames, percent, filterGames, countdown, createCycleClock } from './core.js';
+import { featuredGames, percent, filterGames, countdown, cycleAt, createCycleClock } from './core.js';
 import { icon } from './icons.js';
 import { normalizeGames } from './game-data.js';
 const $ = selector => document.querySelector(selector);
@@ -48,12 +48,12 @@ function renderDialog(id) {
   const game = ranked.find(game => game.id === id);
   if (!game) return;
   dialogGameId = id;
-  $('#dialog-content').innerHTML = `${artwork(game,'dialog-art','dialog',true)}<span class="rtp-eyebrow">${escape(themeLabel(game.theme))} / ${escape(ui.rank)} #${game.rank}</span><h2 id="dialog-title">${escape(game.name)}</h2><div class="dialog-value"><span>RTP</span><strong>${percent(game.basisPoints)}</strong></div><p id="dialog-preview">${escape(ui.preview)}</p><p>${escape(ui.updated)} · ${escape($('#cycle-date').textContent)}</p>${game.description?'<p lang="en">'+escape(game.description)+'</p>':''}<button type="button" class="secondary" data-save="${game.id}" aria-pressed="${saved.has(game.id)}">${icon('bookmark')} ${escape(saved.has(game.id) ? ui.saved : ui.save)}</button>`;
+  $('#dialog-content').innerHTML = `${artwork(game,'dialog-art','dialog',true)}<span class="rtp-eyebrow">${escape(themeLabel(game.theme))} / ${escape(ui.rank)} #${game.rank}</span><h2 id="dialog-title">${escape(game.name)}</h2><div class="dialog-value"><span>RTP</span><strong>${percent(game.basisPoints)}</strong></div><p id="dialog-preview">${escape(ui.detailsNotice)}</p>${ui.published ? '' : `<p>${escape(ui.updated)} · ${escape($('#cycle-date').textContent)}</p>`}${game.description?'<p lang="en">'+escape(game.description)+'</p>':''}<button type="button" class="secondary" data-save="${game.id}" aria-pressed="${saved.has(game.id)}">${icon('bookmark')} ${escape(saved.has(game.id) ? ui.saved : ui.save)}</button>`;
 }
 function onCycle(nextCycle) {
   const changed = Boolean(cycle);
   cycle = nextCycle;
-  ranked = rankFeaturedGames(catalog.games, cycle.key);
+  ranked = featuredGames(catalog.games, cycle.key);
   const featuredThemes = [...new Set(ranked.map(game => game.theme))].sort();
   if(!featuredThemes.includes(theme))theme='all';
   $('.collection-count').textContent = ranked.length;
@@ -72,10 +72,17 @@ function onCycle(nextCycle) {
 }
 function applyCatalog(raw) {
     const nextCatalog=normalizeGames(raw);
+    if (nextCatalog.games.some(game => game.basisPoints !== undefined) !== ui.published) {
+      throw new Error('RTP data is from a different build. Refresh the page and try again.');
+    }
     catalog=nextCatalog;
     $('#error').hidden=true;
     $('.catalog-tools').hidden=false;
     clock?.stop();
+    if (ui.published) {
+      onCycle(cycleAt());
+      return;
+    }
     clock = createCycleClock({ onCycle, onTick: (c,time) => {
       $('#countdown').textContent = countdown(c.end,time);
       $('#countdown').dateTime = 'PT' + Math.max(0,Math.ceil((c.end-time)/1000)) + 'S';

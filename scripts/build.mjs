@@ -13,7 +13,8 @@ const analytics = process.argv.includes('--analytics');
 const json = async path => JSON.parse(await readFile(resolve(root, path), 'utf8'));
 const now = Date.now();
 const registry = validateRegistry(await json('content/codes.json'), now);
-const games = rtpCatalog(await json('content/rtp-games.json'));
+const rtpSettings = await json('content/rtp.json');
+const games = rtpCatalog(await json('content/rtp-games.json'), rtpSettings.percentages);
 const rtpTemplate = await readFile(resolve(root, 'content/rtp-template.html'), 'utf8');
 const { active, archive } = listCodes(registry, now);
 const arg = process.argv.find(value => value.startsWith('--origin='));
@@ -237,7 +238,7 @@ function tutorialCard(l, item, n) {
 
 function localizedPages(l) {
   const guides = localGuides(l);
-  const rtp = rtpCopy(l);
+  const rtp = rtpCopy(l, Object.keys(rtpSettings.percentages).length > 0);
   const n = l.prefix ? 1 : 0;
   const lastmod = registry.lastReviewedAt;
   const homeTitle = l.prefix ? 'Jaiho91 RTP, Promo Codes aur Android APK' : 'Jaiho91 RTP, प्रोमो कोड और Android APK';
@@ -253,7 +254,7 @@ ${tracker(l)}
 <section class="wrap section faq"><div><h2>${l.questions}</h2><p>${l.questionsIntro}</p></div><div>${l.faq.map(([question, answer]) => `<details><summary>${h(question)}</summary><p>${h(answer)}</p></details>`).join('')}</div></section>`,
   }, {
     path:'/rtp/', title:rtp.title + ' | Jaiho91', breadcrumb:rtp.short, description:rtp.description,
-    body:rtpBody(rtpTemplate, l, games, h, now),
+    body:rtpBody(rtpTemplate, l, games, rtpSettings, h, now),
   }, {
     path:'/codes/', title:l.codeTitle + ' | Jaiho91 Codes', breadcrumb:l.codes, description:l.codeMeta, lastmod,
     body:`${pageIntro(l, l.codes, l.codeTitle, l.codeIntro)}${tracker(l, true)}
