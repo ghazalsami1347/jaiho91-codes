@@ -6,14 +6,14 @@ const copy = {
   hi: {
     title:'Jaiho91 Live RTP का प्रीव्यू', short:'Live RTP',
     description:'Jaiho91 Live RTP का प्रीव्यू। टॉप 10 गेम की सूची रोज़ दोपहर 12 बजे IST पर बदलती है। 96% से 99% तक के प्रतिशत उदाहरण हैं।',
-    noticeLabel:'प्रीव्यू',
-    notice:'अभी 96% से 99% तक के सिम्युलेटेड RTP प्रतिशत दिख रहे हैं। असली डेटा फ़ीड बाद में जुड़ेगी।',
+    noticeLabel:'RTP की जानकारी',
+    notice:'RTP बताता है कि लंबे समय में खेली गई कुल राशि का कितना प्रतिशत औसतन वापस मिलने की उम्मीद होती है। RTP ज़्यादा होने पर भी आप किसी भी राउंड में हार सकते हैं।',
   },
   hi_en: {
     title:'Jaiho91 Live RTP Preview', short:'Live RTP',
     description:'Jaiho91 Live RTP ka preview. Top 10 games ki list roz dopahar 12 baje IST par badalti hai. 96% se 99% tak ke percentages misaal hain.',
-    noticeLabel:'PREVIEW',
-    notice:'96% se 99% tak ke RTP numbers simulated hain. Asli data feed baad mein judegi.',
+    noticeLabel:'RTP ki jaankari',
+    notice:'RTP batata hai ki lambe samay mein kheli gayi kul rakam ka kitna percent ausat mein wapas milne ki ummeed hoti hai. RTP zyada hone par bhi aap kisi bhi round mein haar sakte hain.',
   },
 };
 
