@@ -1,5 +1,5 @@
-@font-face{font-family:Manrope;src:url('/assets/manrope.woff2') format('woff2');font-weight:400 800;font-display:swap}
-@font-face{font-family:"Noto Sans Devanagari";src:url('/assets/noto-devanagari.woff2') format('woff2');font-weight:400 800;font-display:swap;unicode-range:U+0900-097F,U+1CD0-1CF4,U+1CF7-1CF9,U+200C-200D,U+20B9,U+25CC,U+A8E0-A8FF}
+@font-face{font-family:Manrope;src:url('./manrope.woff2') format('woff2');font-weight:400 800;font-display:swap}
+@font-face{font-family:"Noto Sans Devanagari";src:url('./noto-devanagari.woff2') format('woff2');font-weight:400 800;font-display:swap;unicode-range:U+0900-097F,U+1CD0-1CF4,U+1CF7-1CF9,U+200C-200D,U+20B9,U+25CC,U+A8E0-A8FF}
 :root{color-scheme:dark;--bg:#100e13;--panel:#1a161e;--subtle:#201924;--line:#342a39;--text:#f7f1f8;--dim:#bfb2c4;--accent:#fb94d8;--hot:#fa65c1;--mint:#a5e7c5;--wrap:1160px;font-family:Manrope,system-ui,sans-serif;background:var(--bg);color:var(--text)}
 *,*::before,*::after{box-sizing:border-box}
 body{margin:0;font-size:15px;line-height:1.65}

@@ -206,6 +206,42 @@ test('generates crawlable pages, working internal routes and an empty state with
   }
   assert.equal(titles.size, routes.length);
   assert.equal(descriptions.size, routes.length);
+  const mount = '/jaiho91-codes';
+  const pages = run('--production', '--origin=' + site, '--base-path=' + mount);
+  assert.equal(pages.status, 0, pages.stderr);
+  const sitemap = await page('sitemap.xml');
+  assert.equal([...sitemap.matchAll(/<loc>/g)].length, routes.length);
+  assert.equal([...sitemap.matchAll(/<xhtml:link /g)].length, 3 * routes.length);
+  assert.ok((await page('robots.txt')).includes('Sitemap: ' + site + mount + '/sitemap.xml'));
+  for (const route of routes) {
+    const path = route.pathname;
+    const html = await page(path.slice(1) + 'index.html');
+    const url = site + mount + path;
+    assert.ok(html.includes('rel="canonical" href="' + url + '"'));
+    assert.ok(html.includes('property="og:url" content="' + url + '"'));
+    assert.ok(html.includes('name="twitter:image" content="' + site + mount + '/assets/'));
+    assert.ok(sitemap.includes('<loc>' + url + '</loc>'));
+    const structured = JSON.parse(html.match(/<script type="application\/ld\+json">(.*?)<\/script>/s)[1]);
+    assert.ok(structured['@graph'].some(node => node.url === url));
+    if (path !== '/' && path !== '/hi_en/') {
+      const crumbs = structured['@graph'].find(node => node['@type'] === 'BreadcrumbList');
+      assert.equal(crumbs.itemListElement.at(-1).item, url);
+    }
+    for (const match of html.matchAll(/(?:href|src|poster)="(\/[^"]*)"/g)) {
+      assert.ok(match[1].startsWith(mount + '/'), match[1]);
+      const target = new URL(match[1], site).pathname.slice(mount.length + 1);
+      assert.ok((await stat(join(temp, 'dist', target + (target.endsWith('/') || !target ? 'index.html' : '')))).isFile(), match[1]);
+    }
+  }
+  const gameList = JSON.parse(await page('assets/rtp/games.json'));
+  assert.ok(gameList.length >= 10);
+  for (const game of gameList) {
+    for (const field of ['image','imageSmall','imageLarge']) {
+      if (!game[field]) continue;
+      assert.ok(game[field].startsWith(mount + '/assets/rtp/games/'));
+      assert.ok((await stat(join(temp, 'dist', game[field].slice(mount.length + 1)))).isFile());
+    }
+  }
   const vercelPreview = runVercel('preview');
   assert.equal(vercelPreview.status, 0, vercelPreview.stderr);
   assert.match(await page('index.html'), /noindex,follow/);

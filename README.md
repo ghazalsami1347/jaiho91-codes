@@ -50,6 +50,12 @@ Guide content and FAQ entries live in [content/guides.mjs](content/guides.mjs). 
 
 For **static hosting without analytics**, run `node scripts/build.mjs --production` and upload the contents of `dist/`. Serve folder indexes, preserve trailing-slash URLs, and serve `404.html` with an HTTP 404 response. The bundled `dist/` is a noindex preview.
 
+### Publish on GitHub Pages
+
+Select **GitHub Actions** under **Settings → Pages → Source**. The Pages workflow checks and publishes `dist/` on every push to `main` and can also be run from the Actions tab. It reads the configured Pages address to set canonicals, language links, structured data, social cards and sitemap URLs. Code updates only require editing `content/codes.json` and pushing the change.
+
+The default project site is `https://ghazalsami1347.github.io/jaiho91-codes/`. Submit its `/jaiho91-codes/sitemap.xml` directly in Search Console if using this address. Crawlers look for `robots.txt` at the hostname root. To serve the generated robots file there, publish on a dedicated hostname, configure it in Pages settings, and rerun the workflow.
+
 ### Deploy the public site to Vercel
 
 Import this folder's GitHub repository as a new Vercel project. Select the folder containing `vercel.json` as the project root. Use Node.js 24.x and leave **Automatically expose System Environment Variables** enabled. The configuration sets the build command, output folder and trailing-slash routing. If `site.json` has a blank origin, the build uses Vercel's production domain automatically. Set the origin explicitly to prefer a specific custom domain. Vercel preview deployments carry `noindex`.

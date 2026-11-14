@@ -17,6 +17,10 @@ const games = rtpCatalog(await json('content/rtp-games.json'));
 const rtpTemplate = await readFile(resolve(root, 'content/rtp-template.html'), 'utf8');
 const { active, archive } = listCodes(registry, now);
 const arg = process.argv.find(value => value.startsWith('--origin='));
+const basePath = process.argv.find(value => value.startsWith('--base-path='))?.slice('--base-path='.length) ?? '';
+if (basePath && (!/^\/[A-Za-z0-9._-]+(?:\/[A-Za-z0-9._-]+)*$/.test(basePath) || basePath.split('/').some(part => part === '.' || part === '..'))) {
+  throw new Error('Set --base-path to a site subdirectory without a trailing slash.');
+}
 const vercelBuild = process.argv.includes('--vercel');
 const production = process.argv.includes('--production') || (vercelBuild && process.env.VERCEL_ENV === 'production');
 const vercelDomain = vercelBuild && process.env.VERCEL_PROJECT_PRODUCTION_URL;
@@ -29,9 +33,22 @@ if (origin && (origin.protocol !== 'https:' || origin.href !== origin.origin + '
 }
 if (production && !origin) throw new Error('Set the production origin in site.json or enable Vercel System Environment Variables.');
 const allowIndexing = !!origin && (!vercelBuild || production);
-const absolute = path => origin ? new URL(path, origin).href : path;
+const publicPath = path => basePath + path;
+const absolute = path => origin ? new URL(publicPath(path), origin).href : publicPath(path);
 const h = value => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[char]));
 const schema = data => JSON.stringify(data).replace(/</g, '\\u003c');
+const alternates = path => [
+  ...Object.values(locales).map(locale => [locale.lang, absolute(pathFor(locale, path))]),
+  ['x-default', absolute(path)],
+];
+function mountHtml(html) {
+  if (!basePath) return html;
+  return html.replace(/\b(href|src|poster|srcset)="([^"]*)"/g, (attribute, name, value) => {
+    if (!/^\/(?!\/)/.test(value)) return attribute;
+    const url = name === 'srcset' ? value.replace(/(^|,\s*)\/(?!\/)/g, '$1' + basePath + '/') : publicPath(value);
+    return `${name}="${url}"`;
+  });
+}
 function displayTime(locale, value, withTime = false) {
   const options = { day:'numeric', month:'short', year:'numeric', timeZone:'Asia/Kolkata' };
   if (withTime) Object.assign(options, { hour:'numeric', minute:'2-digit' });
@@ -100,7 +117,7 @@ function layout(l, { path, title, description, body, article, breadcrumb, lastmo
     })) });
   }
   const canIndex = allowIndexing && index;
-  const alternate = Object.values(locales).map(locale => `<link rel="alternate" hreflang="${locale.lang}" href="${h(absolute(pathFor(locale, path)))}">`).join('\n');
+  const alternate = alternates(path).map(([lang, href]) => `<link rel="alternate" hreflang="${lang}" href="${h(href)}">`).join('\n');
   const socialImage = h(absolute(path === '/rtp/' ? '/assets/rtp/share.jpg' : '/assets/social.jpg'));
   const languageSwitch = Object.values(locales).map(locale => {
     const target = pathFor(locale, index ? path : '/');
@@ -119,8 +136,7 @@ function layout(l, { path, title, description, body, article, breadcrumb, lastmo
 <meta name="robots" content="${canIndex ? 'index,follow' : 'noindex,follow'}">
 <meta name="theme-color" content="#100d15">
 ${canIndex ? `<link rel="canonical" href="${h(url)}">
-${alternate}
-<link rel="alternate" hreflang="x-default" href="${h(absolute(path))}">` : ''}
+${alternate}` : ''}
 <meta property="og:type" content="${article ? 'article' : 'website'}">
 <meta property="og:locale" content="hi_IN">
 <meta property="og:site_name" content="Jaiho91 Codes">
@@ -128,6 +144,7 @@ ${alternate}
 <meta property="og:description" content="${h(description)}">
 ${origin ? `<meta property="og:url" content="${h(url)}">` : ''}
 <meta property="og:image" content="${socialImage}">
+<meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="${h(l.footer)}">
@@ -281,23 +298,31 @@ pages.push({
 
 await mkdir(out, { recursive:true });
 await cp(resolve(root, 'assets'), resolve(out, 'assets'), { recursive:true });
-await writeFile(resolve(out, 'assets/rtp/games.json'), JSON.stringify(games));
+const artworkFields = ['image', 'imageSmall', 'imageLarge'];
+const publicGames = games.map(game => ({
+  ...game,
+  ...Object.fromEntries(artworkFields.map(field => [field, game[field] ? publicPath(game[field]) : null])),
+}));
+await writeFile(resolve(out, 'assets/rtp/games.json'), JSON.stringify(publicGames));
 for (const page of pages) {
   const path = pathFor(page.locale, page.path);
   const file = resolve(out, path.slice(1), ...(path.endsWith('/') ? ['index.html'] : []));
   await mkdir(resolve(file, '..'), { recursive:true });
-  await writeFile(file, layout(page.locale, page));
+  await writeFile(file, mountHtml(layout(page.locale, page)));
 }
 const listed = allowIndexing ? pages.filter(page => page.index !== false) : [];
 await writeFile(resolve(out, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${listed.map(page => `  <url><loc>${h(absolute(pathFor(page.locale, page.path)))}</loc>${page.lastmod ? `<lastmod>${h(page.lastmod)}</lastmod>` : ''}</url>`).join('\n')}
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+${listed.map(page => `  <url>
+    <loc>${h(absolute(pathFor(page.locale, page.path)))}</loc>
+${page.lastmod ? `    <lastmod>${h(page.lastmod)}</lastmod>\n` : ''}${alternates(page.path).map(([lang, href]) => `    <xhtml:link rel="alternate" hreflang="${lang}" href="${h(href)}"/>`).join('\n')}
+  </url>`).join('\n')}
 </urlset>
 `);
 await writeFile(resolve(out, 'robots.txt'), allowIndexing ? `User-agent: *
 Allow: /
-Disallow: /_admin/
-Disallow: /api/
+Disallow: ${publicPath('/_admin/')}
+Disallow: ${publicPath('/api/')}
 Sitemap: ${absolute('/sitemap.xml')}
 ` : 'User-agent: *\nAllow: /\n');
 console.log(`Built ${pages.length - 1} localized pages and a custom 404. ${active.length} current source entries, ${archive.length} archived. ${allowIndexing ? 'Indexing enabled.' : 'Preview pages carry noindex.'}`);

@@ -86,7 +86,7 @@ async function init() {
   $('#error').hidden = true;
   $('#games').setAttribute('aria-busy','true');
   try {
-    const response = await fetch('/assets/rtp/games.json');
+    const response = await fetch(new URL('./games.json', import.meta.url));
     if (!response.ok) throw new Error('Could not load games.json (HTTP ' + response.status + ').');
     applyCatalog(await response.json());
   } catch (error) {
