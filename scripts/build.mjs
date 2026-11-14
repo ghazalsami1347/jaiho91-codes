@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { locales, pathFor } from '../content/locales.mjs';
 import { localGuides } from '../content/guides.mjs';
 import { tutorials } from '../content/tutorials.mjs';
+import { rtpBody, rtpCatalog, rtpCopy } from './rtp.mjs';
 import { tiers, validateRegistry, listCodes } from './registry.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
@@ -12,6 +13,7 @@ const analytics = process.argv.includes('--analytics');
 const json = async path => JSON.parse(await readFile(resolve(root, path), 'utf8'));
 const now = Date.now();
 const registry = validateRegistry(await json('content/codes.json'), now);
+const games = rtpCatalog(await json('content/rtp-games.json'));
 const { active, archive } = listCodes(registry, now);
 const arg = process.argv.find(value => value.startsWith('--origin='));
 const vercelBuild = process.argv.includes('--vercel');
@@ -75,7 +77,7 @@ function layout(l, { path, title, description, body, article, breadcrumb, lastmo
   const siteId = absolute('/#website');
   const publisherId = absolute('/#publisher');
   const page = {
-    '@type': path === '/guides/' || path === '/tutorials/' ? 'CollectionPage' : 'WebPage',
+    '@type': ['/guides/', '/tutorials/', '/rtp/'].includes(path) ? 'CollectionPage' : 'WebPage',
     '@id':url + '#page', url, name:title, description, inLanguage:l.lang, isPartOf:{'@id':siteId},
     ...(lastmod ? {dateModified:lastmod} : {}),
   };
@@ -97,12 +99,12 @@ function layout(l, { path, title, description, body, article, breadcrumb, lastmo
   }
   const canIndex = allowIndexing && index;
   const alternate = Object.values(locales).map(locale => `<link rel="alternate" hreflang="${locale.lang}" href="${h(absolute(pathFor(locale, path)))}">`).join('\n');
-  const socialImage = h(absolute('/assets/social.jpg'));
+  const socialImage = h(absolute(path === '/rtp/' ? '/assets/rtp/share.jpg' : '/assets/social.jpg'));
   const languageSwitch = Object.values(locales).map(locale => {
     const target = pathFor(locale, index ? path : '/');
     return `<a href="${target}" lang="${locale.lang}"${locale === l ? ' aria-current="true"' : ''}>${locale.label}</a>`;
   }).join('');
-  const links = [['/codes/', l.codes], [androidPath, l.android], ['/tutorials/', l.tutorials], ['/guides/', l.guides]];
+  const links = [['/rtp/', rtpCopy(l).short], ['/codes/', l.codes], [androidPath, l.android], ['/tutorials/', l.tutorials], ['/guides/', l.guides]];
   const navLinks = links.map(([href, label]) => `<a href="${pathFor(l, href)}"${href === path ? ' aria-current="page"' : ''}>${label}</a>`).join('');
   const feedback = Object.fromEntries(['expired','copy','copied','selected','noTier','showing','copiedFor','copyFallback','found'].map(key => [key, l[key]]));
   return `<!doctype html>
@@ -209,19 +211,23 @@ function tutorialCard(l, item, n) {
 
 function localizedPages(l) {
   const guides = localGuides(l);
+  const rtp = rtpCopy(l);
   const n = l.prefix ? 1 : 0;
   const lastmod = registry.lastReviewedAt;
-  const homeTitle = l.prefix ? 'Jaiho91 Promo Codes aur Android APK Download' : 'Jaiho91 प्रोमो कोड और Android APK डाउनलोड';
+  const homeTitle = l.prefix ? 'Jaiho91 RTP, Promo Codes aur Android APK' : 'Jaiho91 RTP, प्रोमो कोड और Android APK';
   const result = [{
     path:'/', title:homeTitle, description:l.heroMeta, lastmod,
     body:`<section class="hero"><div class="wrap hero-grid"><div class="hero-copy"><p class="eyebrow"><span></span> ${l.trackerLabel}</p>
 <h1>Jaiho91 <em>${l.heroTitle}</em></h1><p class="hero-description">${l.heroIntro}</p>
 <div class="hero-actions">${downloadButton(l)}<a class="button secondary" href="#code-status" data-track="check_codes">${l.check} ${icon('arrow')}</a></div>
-<a class="text-link hero-help" href="${pathFor(l, tutorialsPath)}">${l.tutorialLink} ${icon('arrow')}</a></div>
+<div class="hero-help"><a class="text-link" href="${pathFor(l, '/rtp/')}">${rtp.link} ${icon('arrow')}</a><a class="text-link" href="${pathFor(l, tutorialsPath)}">${l.tutorialLink} ${icon('arrow')}</a></div></div>
 <div class="hero-art" aria-hidden="true"><span class="orbit orbit-one"></span><span class="orbit orbit-two"></span><span class="spark spark-one">✦</span><span class="spark spark-two">✦</span><span class="spark spark-three">✧</span><img src="/assets/jaiho91-badge.webp" srcset="/assets/jaiho91-badge-small.webp 420w, /assets/jaiho91-badge.webp 720w" sizes="(max-width: 640px) 135px, 344px" alt="" width="720" height="720" decoding="async"></div></div></section>
 ${tracker(l)}
 <section class="section guide-section"><div class="wrap"><div class="section-heading"><div><h2>${l.guideTitle}</h2><p>${l.guideHomeIntro}</p></div><a class="text-link" href="${pathFor(l, '/guides/')}">${l.allGuides} ${icon('arrow')}</a></div><div class="guide-grid">${guides.slice(0,3).map(guide => guideCard(l, guide)).join('')}</div></div></section>
 <section class="wrap section faq"><div><h2>${l.questions}</h2><p>${l.questionsIntro}</p></div><div>${l.faq.map(([question, answer]) => `<details><summary>${h(question)}</summary><p>${h(answer)}</p></details>`).join('')}</div></section>`,
+  }, {
+    path:'/rtp/', title:rtp.title + ' | Jaiho91', breadcrumb:rtp.short, description:rtp.description,
+    body:`${pageIntro(l, rtp.short, rtp.title, rtp.description)}${rtpBody(rtp, games, h)}`,
   }, {
     path:'/codes/', title:l.codeTitle + ' | Jaiho91 Codes', breadcrumb:l.codes, description:l.codeMeta, lastmod,
     body:`${pageIntro(l, l.codes, l.codeTitle, l.codeIntro)}${tracker(l, true)}

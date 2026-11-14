@@ -4,6 +4,10 @@ A responsive code tracker with five support guides, a searchable guide index, a 
 
 The public site defaults to Hindi. The Roman Hindi edition mirrors it under `/hi_en/`. The language switch links to the equivalent page in the other script. Both editions have their own canonicals and reciprocal language alternates.
 
+## RTP catalogue
+
+The Hindi and Roman Hindi catalogue pages are `/rtp/` and `/hi_en/rtp/`. Update `content/rtp-games.json` and rebuild to publish catalogue changes. The imported catalogue and daily demo calculation come from [Jaiho91-rtp](https://github.com/ghazalsami1347/jaiho91-rtp). Demo values reset at noon IST and are generated locally. No live feed is connected. Store local 320 px WebP covers in `assets/rtp/games/`. Favourites are stored in the visitor's browser.
+
 ## Edit tutorials and translations
 
 Shared site labels live in `content/locales.mjs`, guide translations in `content/guides.mjs`, and screenshot captions in `content/tutorials.mjs`. Each tutorial uses one portrait MP4 and three WebP screenshots in `assets/tutorials/`. The filenames start with the tutorial slug, with `-1`, `-2` and `-3` for the stills. Videos load on demand, and screenshots use lazy loading. Include `localizedTerms.hi` and `localizedTerms.hi_en` when adding a code to provide its eligibility and deadline notes in both scripts.

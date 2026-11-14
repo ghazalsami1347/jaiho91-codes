@@ -159,8 +159,8 @@ test('generates crawlable pages, working internal routes and an empty state with
   assert.equal(production.status, 0, production.stderr);
   assert.match(await page('robots.txt'), /Sitemap: https:\/\/jaiho91-preview\.test\/sitemap\.xml/);
   const routes = [...(await page('sitemap.xml')).matchAll(/<loc>(.*?)<\/loc>/g)].map(match => new URL(match[1]));
-  assert.equal(routes.length, 22);
-  assert.equal(new Set(routes.map(url => url.pathname)).size, 22);
+  assert.equal(routes.length, 24);
+  assert.equal(new Set(routes.map(url => url.pathname)).size, 24);
   const apk = 'https://d1i9jwkbb2057y.cloudfront.net/jaiho91_SEO_6BV0FPZR264.apk';
   for (const path of ['index.html', 'guides/android-app/index.html', 'hi_en/index.html', 'hi_en/guides/android-app/index.html']) {
     assert.ok((await page(path)).includes('href="' + apk + '" data-track="download_apk"'));
@@ -178,6 +178,10 @@ test('generates crawlable pages, working internal routes and an empty state with
     assert.ok(html.includes('hreflang="hi-IN" href="' + site + hindiPath + '"'));
     assert.ok(html.includes('hreflang="hi-Latn-IN" href="' + site + '/hi_en' + hindiPath + '"'));
     assert.ok(html.includes('hreflang="x-default" href="' + site + hindiPath + '"'));
+    if (hindiPath === '/rtp/') {
+      assert.equal([...html.matchAll(/class="rtp-tile"/g)].length, 36);
+      assert.match(html, /id="rtp-notice"/);
+    }
     if (hindiPath === '/tutorials/') {
       assert.equal([...html.matchAll(/<video controls playsinline preload="none"/g)].length, 7);
       assert.equal([...html.matchAll(/<figcaption>/g)].length, 21);
