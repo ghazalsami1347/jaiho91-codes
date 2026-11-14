@@ -30,7 +30,7 @@ Run the checks with `node --test scripts/site.test.mjs`. The Motion mini bundle 
 
 ## Manage Jaiho91 codes
 
-Edit [content/codes.json](content/codes.json). It is the single source for both the homepage and the full tracker.
+Edit [content/codes.json](content/codes.json). It drives the current code tracker and archive on the Promo Codes page in both languages.
 
 1. Find a dated announcement from the provider. Confirm the exact code, tier, deadline, and any eligibility conditions. Record the direct public post URL and add its domain or channel to the approved source list if needed.
 2. Add one record per public code and VIP tier. Use a unique `id`, a `tier` of `VIP 0` or `VIP 1–20`, the exact `code`, `sourceUrl`, and a short `terms` note. Enter `publishedAt`, `verifiedAt` and `expiresAt` as ISO timestamps with an explicit offset. India uses `+05:30`. Describe any deadline interpretation in the terms.

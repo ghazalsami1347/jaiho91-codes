@@ -202,7 +202,7 @@ function codeCard(l, entry, expired = false) {
 <details class="code-terms"><summary>${l.eligibility}</summary><p>${h(terms)} ${l.sourceReviewed} ${displayTime(l, entry.verifiedAt)}. ${l.codeTerms}</p></details></article>`;
 }
 
-function tracker(l, full = false) {
+function tracker(l) {
   return `<section id="code-status" class="wrap section tracker" aria-labelledby="status-title">
 <div class="section-heading"><div><h2 id="status-title">${l.status}</h2><p>${l.statusIntro}</p></div><span class="review">${icon('clock')} ${l.reviewed} ${displayTime(l, registry.lastReviewedAt, true)}</span></div>
 <div class="status-grid"><div>
@@ -210,7 +210,6 @@ ${active.length ? `<fieldset class="tier-switch" data-code-filters hidden><legen
 <div class="code-list" data-code-list>${active.map(entry => codeCard(l, entry)).join('')}</div>
 <div class="empty" data-code-empty${active.length ? ' hidden' : ''}><span class="glyph">${icon('ticket')}</span><h3>${l.noCode}</h3><p>${l.noCodeIntro}</p><a class="text-link" href="${sourceChannel}" data-track="source_click" rel="external noreferrer">${l.announcements} ${icon('out')}</a></div>
 <p class="sr-only" role="status" data-code-feedback></p><p class="code-note">${l.termsNote}</p>
-${full ? '' : `<a class="text-link" href="${pathFor(l, '/codes/')}#code-history">${l.history} ${icon('arrow')}</a>`}
 </div>
 <aside class="aside-card"><span class="glyph">${icon('shield')}</span><h3>${l.before}</h3><ol><li>${l.stepTier}</li><li>${l.stepCopy}</li><li>${l.stepTerms}</li></ol>
 <a class="text-link" href="${pathFor(l, '/guides/how-to-redeem/')}" data-track="open_guide">${l.redeem} ${icon('arrow')}</a><div class="aside-foot"><a href="${sourceChannel}" data-track="source_click" rel="external noreferrer">${l.announcements} ${icon('out')}</a></div></aside>
@@ -243,13 +242,12 @@ function localizedPages(l) {
   const lastmod = registry.lastReviewedAt;
   const homeTitle = l.prefix ? 'Jaiho91 RTP, Promo Codes aur Android APK' : 'Jaiho91 RTP, प्रोमो कोड और Android APK';
   const result = [{
-    path:'/', title:homeTitle, description:l.heroMeta, lastmod,
+    path:'/', title:homeTitle, description:l.heroMeta,
     body:`<section class="hero"><div class="wrap hero-grid"><div class="hero-copy">
 <h1>Jaiho91</h1><p class="hero-description">${l.heroIntro}</p>
 <div class="hero-actions"><a class="button" href="${pathFor(l, '/rtp/')}">${rtp.short} ${icon('arrow')}</a><a class="button secondary" href="${pathFor(l, '/codes/')}" data-track="check_codes">${l.codes} ${icon('arrow')}</a></div>
 <div class="hero-help"><a class="text-link" href="${h(apkUrl)}" data-track="download_apk" rel="external noreferrer">${icon('download')} ${l.download}</a><a class="text-link" href="${pathFor(l, tutorialsPath)}">${l.tutorialLink} ${icon('arrow')}</a></div></div>
 <div class="hero-art" aria-hidden="true"><span class="orbit orbit-one"></span><span class="orbit orbit-two"></span><span class="spark spark-one">✦</span><span class="spark spark-two">✦</span><span class="spark spark-three">✧</span><img src="/assets/jaiho91-badge.webp" srcset="/assets/jaiho91-badge-small.webp 420w, /assets/jaiho91-badge.webp 720w" sizes="(max-width: 640px) 135px, 344px" alt="" width="720" height="720" decoding="async"></div></div></section>
-${tracker(l)}
 <section class="section guide-section"><div class="wrap"><div class="section-heading"><div><h2>${l.guideTitle}</h2><p>${l.guideHomeIntro}</p></div><a class="text-link" href="${pathFor(l, '/guides/')}">${l.allGuides} ${icon('arrow')}</a></div><div class="guide-grid">${guides.slice(0,3).map(guide => guideCard(l, guide)).join('')}</div></div></section>
 <section class="wrap section faq"><div><h2>${l.questions}</h2><p>${l.questionsIntro}</p></div><div>${l.faq.map(([question, answer]) => `<details><summary>${h(question)}</summary><p>${h(answer)}</p></details>`).join('')}</div></section>`,
   }, {
@@ -257,7 +255,7 @@ ${tracker(l)}
     body:rtpBody(rtpTemplate, l, games, rtpSettings, h, now),
   }, {
     path:'/codes/', title:l.codeTitle + ' | Jaiho91 Codes', breadcrumb:l.codes, description:l.codeMeta, lastmod,
-    body:`${pageIntro(l, l.codes, l.codeTitle, l.codeIntro)}${tracker(l, true)}
+    body:`${pageIntro(l, l.codes, l.codeTitle, l.codeIntro)}${tracker(l)}
 <section class="wrap section history" id="code-history"><div class="section-heading"><div><h2>${l.history}</h2><p>${l.historyIntro}</p></div></div><div class="code-list" data-archive>${archive.map(entry => codeCard(l, entry, true)).join('')}</div><p data-archive-empty${archive.length ? ' hidden' : ''}>${l.noHistory}</p></section>`,
   }, {
     path:'/guides/', title:l.guideTitle + ' | Android APK, OTP', breadcrumb:l.guides, description:l.guideMeta,

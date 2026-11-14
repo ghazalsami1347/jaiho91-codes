@@ -152,9 +152,14 @@ test('generates crawlable pages, working internal routes and an empty state with
   const preview = run('--origin=');
   assert.equal(preview.status, 0, preview.stderr);
   assert.match(await page('index.html'), /noindex,follow/);
-  assert.match(await page('index.html'), /कोई सत्यापित कोड उपलब्ध नहीं/);
-  assert.match(await page('hi_en/index.html'), /Abhi koi verified code available nahi hai/);
-  assert.doesNotMatch(await page('index.html'), /class="copy"/);
+  for (const prefix of ['', 'hi_en/']) {
+    const homepage = await page(prefix + 'index.html');
+    assert.ok(homepage.includes('href="/' + prefix + 'codes/" data-track="check_codes"'));
+    assert.doesNotMatch(homepage, /id="code-status"|data-code-list/);
+    const codes = await page(prefix + 'codes/index.html');
+    assert.match(codes, prefix ? /Abhi koi verified code available nahi hai/ : /कोई सत्यापित कोड उपलब्ध नहीं/);
+    assert.doesNotMatch(codes, /class="copy"/);
+  }
   assert.notEqual(run('--origin=', '--production').status, 0);
 
   const site = 'https://jaiho91-preview.test';
