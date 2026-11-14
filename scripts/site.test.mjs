@@ -144,6 +144,9 @@ test('generates crawlable pages, working internal routes and an empty state with
     env:{ ...process.env, VERCEL_ENV:environment, VERCEL_PROJECT_PRODUCTION_URL:'jaiho91-preview.test' },
   });
   const page = path => readFile(join(temp, 'dist', path), 'utf8');
+  const settingsFile = join(temp, 'content', 'rtp.json');
+  const settings = JSON.parse(await readFile(settingsFile, 'utf8'));
+  await writeFile(settingsFile, JSON.stringify({ ...settings, percentages:{} }));
   const emptyRegistry = { ...registry, codes:[] };
   await writeFile(join(temp, 'content', 'codes.json'), JSON.stringify(emptyRegistry));
   const preview = run('--origin=');
@@ -266,8 +269,6 @@ test('generates crawlable pages, working internal routes and an empty state with
   assert.match(await page('index.html'), /rel="canonical" href="https:\/\/jaiho91-preview\.test\/"/);
   assert.match(await page('robots.txt'), /Sitemap: https:\/\/jaiho91-preview\.test\/sitemap\.xml/);
 
-  const settingsFile = join(temp, 'content', 'rtp.json');
-  const settings = JSON.parse(await readFile(settingsFile, 'utf8'));
   settings.notice.hi.text = 'नई सूचना $&';
   settings.notice.hi_en.text = 'Nayi soochna';
   settings.percentages = { 'super-ace-1':95.25, 'power-of-the-kraken-1':98.75 };
