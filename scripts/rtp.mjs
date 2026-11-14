@@ -5,15 +5,15 @@ import { arcadeStrings, arcadeUi } from '../content/rtp-locales.mjs';
 const copy = {
   hi: {
     title:'Jaiho91 Live RTP का प्रीव्यू', short:'Live RTP',
-    description:'Jaiho91 Live RTP का प्रीव्यू। टॉप 10 गेम की सूची रोज़ दोपहर 12 बजे IST पर बदलती है। 96% से 99% तक के प्रतिशत उदाहरण हैं।',
-    dataNotice:'प्रीव्यू में दिख रहे RTP प्रतिशत सिम्युलेटेड हैं।',
+    description:'Jaiho91 का RTP प्रीव्यू देखें। टॉप 10 गेम की सूची रोज़ दोपहर 12 बजे IST पर बदलती है।',
+    dataNotice:'RTP प्रीव्यू · उदाहरण के आँकड़े',
     publishedTitle:'Jaiho91 Live RTP और गेम सूची',
     publishedDescription:'Jaiho91 गेम की प्रकाशित RTP सूची देखें। RTP लंबे समय का औसत है और किसी राउंड में जीत की गारंटी नहीं है।',
   },
   hi_en: {
     title:'Jaiho91 Live RTP Preview', short:'Live RTP',
-    description:'Jaiho91 Live RTP ka preview. Top 10 games ki list roz dopahar 12 baje IST par badalti hai. 96% se 99% tak ke percentages misaal hain.',
-    dataNotice:'Preview mein dikh rahe RTP percentages simulated hain.',
+    description:'Jaiho91 ka RTP preview dekhein. Top 10 games ki list roz dopahar 12 baje IST par badalti hai.',
+    dataNotice:'RTP Preview · Sample figures',
     publishedTitle:'Jaiho91 Live RTP aur game list',
     publishedDescription:'Jaiho91 games ki published RTP list dekhein. RTP lambe samay ka average hai. Har round ka nateeja alag ho sakta hai.',
   },
@@ -73,7 +73,7 @@ export function rtpBody(template, locale, games, settings, h, now) {
     .replace('{{ui}}', () => h(JSON.stringify({
       ...Object.fromEntries(Object.entries(arcadeUi).map(([key, values]) => [key, values[language]])),
       published,
-      detailsNotice:published ? text : arcadeUi.preview[language],
+      detailsNotice:published ? text : c.dataNotice,
     })))
     .replace('{{noticeLabel}}', () => h(label))
     .replace('{{notice}}', () => h(text))

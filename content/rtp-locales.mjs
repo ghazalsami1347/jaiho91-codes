@@ -47,9 +47,9 @@ export const arcadeStrings = {
     'Jaiho91 games ki published RTP list.',
   ],
   'How are the games ranked?':['गेम का क्रम कैसे तय होता है?','Games ka rank kaise tay hota hai?'],
-  'The daily list shows up to 10 games, ranked by simulated RTP from 96% to 99%. Search and filters apply to today’s lineup.':[
-    'रोज़ की सूची में अधिकतम 10 गेम होते हैं। उनका क्रम 96% से 99% के सिम्युलेटेड RTP से तय होता है। खोज और फ़िल्टर आज की सूची पर लागू होते हैं।',
-    'Roz ki list mein zyada se zyada 10 games hain. Unka rank 96% se 99% ke simulated RTP se tay hota hai. Search aur filters aaj ki list par lagte hain.',
+  'The list shows up to 10 games, ranked from highest to lowest by the displayed percentage. Search and filters apply to this list.':[
+    'सूची में अधिकतम 10 गेम दिखते हैं। उनका क्रम दिखाए गए प्रतिशत के हिसाब से ज़्यादा से कम होता है। खोज और फ़िल्टर इसी सूची पर लागू होते हैं।',
+    'List mein zyada se zyada 10 games dikhte hain. Jo percentages dikh rahe hain, unke hisaab se games zyada se kam ke kram mein hain. Search aur filters isi list par lagte hain.',
     'प्रकाशित RTP के हिसाब से अधिकतम 10 गेम दिखते हैं। खोज और फ़िल्टर इस सूची पर लागू होते हैं।',
     'Published RTP ke hisaab se zyada se zyada 10 games dikhte hain. Search aur filters isi list par lagte hain.',
   ],
@@ -76,9 +76,9 @@ export const arcadeStrings = {
     'Yeh covers game list aur screenshots dekh kar banaye gaye hain. App ki tasveerein alag ho sakti hain.',
   ],
   'Close game details':['गेम की जानकारी बंद करें','Game ki jankari band karein'],
-  'The cards above are a preview. Enable JavaScript for today’s lineup, search and saved games.':[
-    'ऊपर पिछले बिल्ड की सूची है। आज की सूची, खोज और पसंदीदा के लिए JavaScript चालू करें।',
-    'Upar pichle build ki list hai. Aaj ki list, search aur pasandida ke liye JavaScript chalu karein.',
+  'Enable JavaScript to refresh the list, search games and use bookmarks.':[
+    'सूची अपडेट करने, गेम खोजने और बुकमार्क इस्तेमाल करने के लिए JavaScript चालू करें।',
+    'List refresh karne, games khojne aur bookmarks istemal karne ke liye JavaScript chalu karein.',
   ],
 };
 
@@ -91,7 +91,6 @@ export const arcadeUi = {
   count:['गेम मिले','games mile'],
   rank:['स्थान','Rank'],
   podium:[['सबसे ज़्यादा RTP','दूसरा','तीसरा'],['SABSE ZYADA RTP','DOOSRA','TEESRA']],
-  preview:['प्रीव्यू का सिम्युलेटेड प्रतिशत।','Preview ka simulated percentage.'],
   empty:['दूसरा नाम खोजें या फ़िल्टर हटाएँ।','Doosra naam khojein ya filters hatayein.'],
   emptySaved:['सहेजे गए गेम मौजूदा सूची में होने पर दिखेंगे।','Save kiye games maujooda list mein hone par dikhenge.'],
   updated:['पिछला अपडेट','Pichla update'],
