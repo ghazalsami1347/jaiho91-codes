@@ -6,7 +6,9 @@ The public site defaults to Hindi. The Roman Hindi edition mirrors it under `/hi
 
 ## RTP catalogue
 
-The Hindi and Roman Hindi catalogue pages are `/rtp/` and `/hi_en/rtp/`. Update `content/rtp-games.json` and rebuild to publish catalogue changes. Only the ten featured games are displayed. The imported catalogue and daily selection come from [Jaiho91-rtp](https://github.com/ghazalsami1347/jaiho91-rtp). Demo values stay between 96% and 99%. The lineup resets at noon IST using the visitor's device clock. Search and favourites filter the current lineup. Favourites are stored in the visitor's browser. No live feed is connected. Store local 320 px WebP covers in `assets/rtp/games/`.
+The Hindi and Roman Hindi catalogue pages are `/rtp/` and `/hi_en/rtp/`. Both use the original arcade template, artwork, podium and details dialog from [Jaiho91-rtp](https://github.com/ghazalsami1347/jaiho91-rtp). The podium highlights three games from the daily top ten. Demo values stay between 96% and 99%. The lineup resets at noon IST using the visitor's device clock. Search and favourites filter the current lineup. Favourites are stored in the visitor's browser.
+
+Edit `content/rtp-games.json` and rebuild to publish catalogue changes. Store WebP covers in `assets/rtp/games/`. Use the game ID and a size suffix of `-128.webp`, `-320.webp` or `-640.webp`. The language strings are in `content/rtp-locales.mjs`.
 
 ## Edit tutorials and translations
 

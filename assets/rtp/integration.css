@@ -1,0 +1,7 @@
+.rtp-site-links{display:flex;flex-wrap:wrap;gap:0 16px;align-items:center;margin-top:7px;font-size:12px}
+.rtp-site-links a{display:inline-flex;align-items:center;min-height:44px;color:#dfc5e2}
+.rtp-site-links a:hover,.rtp-site-links a[aria-current]{color:#f7ca84;text-decoration:underline;text-underline-offset:4px}
+.demo-notice p{font-size:12px;line-height:1.5}
+html[lang="hi-IN"] .hero h1 span{font-size:.82em;letter-spacing:normal}
+html[lang="hi-Latn-IN"] .hero h1 span{font-size:.88em}
+.hero-actions{flex-wrap:wrap}

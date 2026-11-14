@@ -179,16 +179,21 @@ test('generates crawlable pages, working internal routes and an empty state with
     assert.ok(html.includes('hreflang="hi-Latn-IN" href="' + site + '/hi_en' + hindiPath + '"'));
     assert.ok(html.includes('hreflang="x-default" href="' + site + hindiPath + '"'));
     if (hindiPath === '/rtp/') {
-      const featured = html.split('data-rtp-ranked>')[1].split('<template')[0];
-      assert.equal([...featured.matchAll(/class="rtp-tile"/g)].length, 10);
-      assert.equal([...featured.matchAll(/class="rtp-value">[^<]*?(\d+\.\d+)%/g)].filter(match => Number(match[1]) >= 96 && Number(match[1]) <= 99).length, 10);
+      const featured = html.split('<div id="games"')[1].split('<div id="empty"')[0];
+      assert.equal([...featured.matchAll(/class="game-card(?: top-game)?"/g)].length, 10);
+      assert.equal([...featured.matchAll(/class="card-rtp"><span>[^<]+<\/span><strong>(\d+\.\d+)%/g)].filter(match => Number(match[1]) >= 96 && Number(match[1]) <= 99).length, 10);
       assert.match(html, /id="rtp-notice"/);
+      assert.match(html, /href="\/assets\/rtp\/arcade\.css"/);
+      assert.match(html, /id="hero-deck"/);
+      assert.match(html, /id="leaders"/);
+      assert.match(html, /id="countdown"/);
+      assert.match(html, /<dialog id="game-dialog"/);
     }
     if (hindiPath === '/tutorials/') {
       assert.equal([...html.matchAll(/<video controls playsinline preload="none"/g)].length, 7);
       assert.equal([...html.matchAll(/<figcaption>/g)].length, 21);
     }
-    assert.equal([...html.matchAll(/<h1>/g)].length, 1);
+    assert.equal([...html.matchAll(/<h1(?:\s[^>]*)?>/g)].length, 1);
     titles.add(html.match(/<title>(.*?)<\/title>/)[1]);
     descriptions.add(html.match(/<meta name="description" content="([^"]+)">/)[1]);
     const structured = html.match(/<script type="application\/ld\+json">(.*?)<\/script>/s)[1];

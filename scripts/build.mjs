@@ -14,6 +14,7 @@ const json = async path => JSON.parse(await readFile(resolve(root, path), 'utf8'
 const now = Date.now();
 const registry = validateRegistry(await json('content/codes.json'), now);
 const games = rtpCatalog(await json('content/rtp-games.json'));
+const rtpTemplate = await readFile(resolve(root, 'content/rtp-template.html'), 'utf8');
 const { active, archive } = listCodes(registry, now);
 const arg = process.argv.find(value => value.startsWith('--origin='));
 const vercelBuild = process.argv.includes('--vercel');
@@ -72,6 +73,7 @@ function installPopup(l) {
 }
 
 function layout(l, { path, title, description, body, article, breadcrumb, lastmod, index = true }) {
+  const arcade = path === '/rtp/';
   const local = pathFor(l, path);
   const url = absolute(local);
   const siteId = absolute('/#website');
@@ -135,12 +137,16 @@ ${origin ? `<meta property="og:url" content="${h(url)}">` : ''}
 <meta name="twitter:image" content="${socialImage}">
 <meta name="twitter:image:alt" content="${h(l.footer)}">
 <link rel="icon" href="/assets/mark.png" type="image/png" sizes="76x76">
-<link rel="preload" href="/assets/manrope.woff2" as="font" type="font/woff2" crossorigin>
+${arcade ? `<link rel="stylesheet" href="/assets/rtp/arcade.css">
+<link rel="stylesheet" href="/assets/rtp/integration.css">
+<script type="module" src="/assets/rtp/app.js"></script>
+<script type="module" src="/assets/analytics-client.js"></script>` : `<link rel="preload" href="/assets/manrope.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/site.css">
-<script src="/assets/site.js" defer></script>
+<script type="module" src="/assets/site.js"></script>`}
 ${canIndex ? `<script type="application/ld+json">${schema({'@context':'https://schema.org','@graph':graph})}</script>` : ''}
 </head>
 <body data-ui="${h(JSON.stringify(feedback))}"${analytics && index ? ' data-analytics' : ''}>
+${arcade ? body : `
 <a class="skip" href="#main">${l.skip}</a>
 <header class="site-header"><div class="wrap header-inner">
 ${brand(l)}
@@ -152,7 +158,7 @@ ${path === '/' || path === androidPath ? installPopup(l) : ''}
 <main id="main" tabindex="-1">${body}</main>
 <footer class="site-footer"><div class="wrap footer-grid"><div>${brand(l)}<p>${l.footer}</p></div>
 <nav aria-label="${l.prefix ? 'Footer links' : 'फ़ुटर लिंक'}">${navLinks}<a href="${pathFor(l, '/about/')}">${l.about}</a><a href="${pathFor(l, '/privacy/')}">${l.privacy}</a></nav></div>
-<div class="wrap footer-bottom"><span>Jaiho91 Codes · ${l.india}</span><span>${l.adults}</span></div></footer>
+<div class="wrap footer-bottom"><span>Jaiho91 Codes · ${l.india}</span><span>${l.adults}</span></div></footer>`}
 </body>
 </html>
 `;
@@ -227,7 +233,7 @@ ${tracker(l)}
 <section class="wrap section faq"><div><h2>${l.questions}</h2><p>${l.questionsIntro}</p></div><div>${l.faq.map(([question, answer]) => `<details><summary>${h(question)}</summary><p>${h(answer)}</p></details>`).join('')}</div></section>`,
   }, {
     path:'/rtp/', title:rtp.title + ' | Jaiho91', breadcrumb:rtp.short, description:rtp.description,
-    body:`${pageIntro(l, rtp.short, rtp.title, rtp.description)}${rtpBody(rtp, games, h, now)}`,
+    body:rtpBody(rtpTemplate, l, games, h, now, apkUrl),
   }, {
     path:'/codes/', title:l.codeTitle + ' | Jaiho91 Codes', breadcrumb:l.codes, description:l.codeMeta, lastmod,
     body:`${pageIntro(l, l.codes, l.codeTitle, l.codeIntro)}${tracker(l, true)}
@@ -275,6 +281,7 @@ pages.push({
 
 await mkdir(out, { recursive:true });
 await cp(resolve(root, 'assets'), resolve(out, 'assets'), { recursive:true });
+await writeFile(resolve(out, 'assets/rtp/games.json'), JSON.stringify(games));
 for (const page of pages) {
   const path = pathFor(page.locale, page.path);
   const file = resolve(out, path.slice(1), ...(path.endsWith('/') ? ['index.html'] : []));

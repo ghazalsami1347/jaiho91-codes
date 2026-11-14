@@ -1,3 +1,5 @@
+import { track } from './analytics-client.js';
+
 const menu = document.querySelector('.menu-button');
 const nav = document.querySelector('#nav');
 const ui = JSON.parse(document.body.dataset.ui);
@@ -62,30 +64,6 @@ function reveal(element, direction = 0) {
   if (!element || !motion || reducedMotion.matches) return;
   const offset = direction ? `translateX(${direction * 12}px)` : 'translateY(12px)';
   motion(element, { opacity:[0.62, 1], transform:[offset, 'none'] }, { duration:0.29, ease:[0.2, 0.75, 0.3, 1] });
-}
-
-const analyticsEnabled = document.body.hasAttribute('data-analytics') &&
-  navigator.globalPrivacyControl !== true && navigator.doNotTrack !== '1' && window.doNotTrack !== '1';
-
-function track(action, tier) {
-  if (!analyticsEnabled) return;
-  fetch('/api/events', {
-    method:'POST',
-    credentials:'omit',
-    headers:{ 'Content-Type':'application/json' },
-    body:JSON.stringify({ action, path:location.pathname, tier }),
-    keepalive:true,
-  }).catch(() => {});
-}
-
-if (analyticsEnabled) {
-  if (document.prerendering) document.addEventListener('prerenderingchange', () => track('page_view'), { once:true });
-  else track('page_view');
-  window.addEventListener('pageshow', event => { if (event.persisted) track('page_view'); });
-  document.addEventListener('click', event => {
-    const target = event.target.closest('[data-track]');
-    if (target) track(target.dataset.track, target.closest('[data-tier]')?.dataset.tier);
-  });
 }
 
 function setMenu(open) {
