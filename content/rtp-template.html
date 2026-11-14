@@ -4,16 +4,16 @@
       <a class="brand" href="{{home}}" aria-label="Jaiho91 home"><img src="/assets/rtp/jaiho91-logo-128.webp" alt="Jaiho91" width="64" height="64"><span><strong>Jaiho91</strong><small>RTP updates · 12 PM IST</small></span></a>
       <nav aria-label="Main navigation"><a class="nav-active" href="#catalog">Games</a><a href="#about">RTP explained</a></nav>
       <a class="download-btn download-btn-header" href="{{apk}}" data-track="download_apk" download rel="noopener" aria-label="Download the Jaiho91 Android app (APK)"><span data-icon="download"></span> Download</a>
-      <span class="status-badge">DEMO RTP</span>
+      <span class="status-badge">LIVE RTP</span>
     </div>
   </header>
   <nav class="wrap rtp-site-links" aria-label="{{navLabel}}">{{siteLinks}}</nav>
   <main class="wrap" data-rtp-ui="{{ui}}">
-    <div class="disclaimer demo-notice" id="rtp-notice"><span data-icon="info"></span><p>{{notice}}</p></div>
-    <section class="hero" aria-labelledby="hero-title">
+    <aside class="rtp-preview" id="rtp-notice" aria-labelledby="rtp-notice-title"><span data-icon="info" aria-hidden="true"></span><p><strong id="rtp-notice-title">{{noticeLabel}}</strong> {{notice}}</p></aside>
+    <section class="hero" aria-labelledby="hero-title" aria-describedby="rtp-notice">
       <div class="hero-copy">
         <div class="eyebrow">DAILY GAME LIST <span class="edition" id="edition">IST / DAILY</span></div>
-        <h1 id="hero-title">Jaiho91<br><span>RTP today.</span></h1>
+        <h1 id="hero-title">Jaiho91<br><span>Live RTP</span></h1>
         <p><span id="intro-count">10</span> Jaiho91 games, sorted by RTP.<br>The list changes daily at 12 PM IST.</p>
         <div class="hero-actions">
           <a class="primary" href="#catalog">See today’s lineup <span data-icon="arrow"></span></a>
@@ -55,5 +55,5 @@
   </main>
   <footer class="wrap footer"><a class="footer-brand" href="{{home}}"><img src="/assets/rtp/jaiho91-logo-128.webp" alt="Jaiho91" width="40" height="40"><span>Jaiho91 RTP</span></a><p>Jaiho91 game list · Daily update at 12 PM IST.</p><a href="#hero-title">Back to top <span data-icon="up"></span></a></footer>
   <div id="announcer" class="sr-only" role="status" aria-live="polite"></div>
-  <dialog id="game-dialog" aria-labelledby="dialog-title"><button id="dialog-close" class="dialog-close" type="button" aria-label="Close game details"><span data-icon="close"></span></button><div id="dialog-content"></div></dialog>
+  <dialog id="game-dialog" aria-labelledby="dialog-title" aria-describedby="dialog-preview"><button id="dialog-close" class="dialog-close" type="button" aria-label="Close game details"><span data-icon="close"></span></button><div id="dialog-content"></div></dialog>
   <noscript><div class="noscript">The cards above are a preview. Enable JavaScript for today’s lineup, search and saved games.</div></noscript>

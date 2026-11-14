@@ -5,16 +5,16 @@ import { arcadeStrings, arcadeUi } from '../content/rtp-locales.mjs';
 
 const copy = {
   hi: {
-    title:'Jaiho91 RTP और गेम सूची', short:'RTP', link:'RTP और गेम देखें',
-    description:'Jaiho91 के टॉप 10 डेमो गेम देखें। डेमो RTP 96% से 99% के बीच है और सूची रोज़ दोपहर 12 बजे IST पर बदलती है।',
-    notice:'ये प्रतिशत डेमो के लिए बनाए जाते हैं। ये असली या लाइव RTP, जीत की संभावना या खेलने की सलाह नहीं हैं।',
-    demoValue:'डेमो RTP',
+    title:'Jaiho91 Live RTP का प्रीव्यू', short:'Live RTP', link:'Live RTP का प्रीव्यू देखें',
+    description:'Jaiho91 Live RTP का प्रीव्यू। टॉप 10 गेम की सूची रोज़ दोपहर 12 बजे IST पर बदलती है। 96% से 99% तक के प्रतिशत उदाहरण हैं।',
+    noticeLabel:'प्रीव्यू',
+    notice:'अभी 96% से 99% तक के सिम्युलेटेड RTP प्रतिशत दिख रहे हैं। असली डेटा फ़ीड बाद में जुड़ेगी।',
   },
   hi_en: {
-    title:'Jaiho91 RTP aur game list', short:'RTP', link:'RTP aur games dekhein',
-    description:'Jaiho91 ke top 10 demo games dekhein. Demo RTP 96% se 99% ke beech hai aur list roz dopahar 12 baje IST par badalti hai.',
-    notice:'Yeh percentages demo ke liye bante hain. Yeh asli ya live RTP, jeetne ka chance ya khelne ki salah nahi hain.',
-    demoValue:'Demo RTP',
+    title:'Jaiho91 Live RTP Preview', short:'Live RTP', link:'Live RTP preview dekhein',
+    description:'Jaiho91 Live RTP ka preview. Top 10 games ki list roz dopahar 12 baje IST par badalti hai. 96% se 99% tak ke percentages misaal hain.',
+    noticeLabel:'PREVIEW',
+    notice:'96% se 99% tak ke RTP numbers simulated hain. Asli data feed baad mein judegi.',
   },
 };
 
@@ -47,7 +47,7 @@ export function rtpBody(template, locale, games, h, now, apkUrl) {
   const featured = rankFeaturedGames(games, cycleAt(now).key);
   const card = game => `<article class="game-card${game.rank <= 3 ? ' top-game' : ''}" id="game-${game.id}">
 <div class="cover-wrap">${game.image ? `<img class="game-art" src="${h(game.image)}" width="320" height="320" alt="" loading="lazy" decoding="async">` : '<div class="game-art placeholder"></div>'}<span class="cover-rank${game.rank <= 3 ? ' is-top' : ''}">#${game.rank}</span></div>
-<div class="card-body"><span class="game-theme">${h(game.theme)}</span><h3>${h(game.name)}</h3><div class="card-rtp"><span>${h(c.demoValue)}</span><strong>${percent(game.basisPoints)}</strong></div></div></article>`;
+<div class="card-body"><span class="game-theme">${h(game.theme)}</span><h3>${h(game.name)}</h3><div class="card-rtp"><span>RTP</span><strong>${percent(game.basisPoints)}</strong></div></div></article>`;
   const siteLinks = [
     ...[['/codes/', locale.codes], ['/tutorials/', locale.tutorials]]
       .map(([path, label]) => `<a href="${pathFor(locale, path)}">${h(label)}</a>`),
@@ -57,11 +57,11 @@ export function rtpBody(template, locale, games, h, now, apkUrl) {
     .replaceAll('{{home}}', pathFor(locale, '/'))
     .replaceAll('{{apk}}', h(apkUrl))
     .replace('{{navLabel}}', language ? 'Jaiho91 links aur bhasha' : 'Jaiho91 लिंक और भाषा')
-    .replace('{{ui}}', h(JSON.stringify({
-      ...Object.fromEntries(Object.entries(arcadeUi).map(([key, values]) => [key, values[language]])),
-      demo:c.demoValue,
-    })))
+    .replace('{{ui}}', h(JSON.stringify(Object.fromEntries(
+      Object.entries(arcadeUi).map(([key, values]) => [key, values[language]]),
+    ))))
     .replace('{{siteLinks}}', siteLinks)
+    .replace('{{noticeLabel}}', h(c.noticeLabel))
     .replace('{{notice}}', h(c.notice))
     .replace('{{games}}', featured.map(card).join('\n'));
 }

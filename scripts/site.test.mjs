@@ -181,13 +181,17 @@ test('generates crawlable pages, working internal routes and an empty state with
     if (hindiPath === '/rtp/') {
       const featured = html.split('<div id="games"')[1].split('<div id="empty"')[0];
       assert.equal([...featured.matchAll(/class="game-card(?: top-game)?"/g)].length, 10);
-      assert.equal([...featured.matchAll(/class="card-rtp"><span>[^<]+<\/span><strong>(\d+\.\d+)%/g)].filter(match => Number(match[1]) >= 96 && Number(match[1]) <= 99).length, 10);
-      assert.match(html, /id="rtp-notice"/);
+      assert.equal([...featured.matchAll(/class="card-rtp"><span>RTP<\/span><strong>(\d+\.\d+)%/g)].filter(match => Number(match[1]) >= 96 && Number(match[1]) <= 99).length, 10);
+      assert.match(html, /<h1 id="hero-title">Jaiho91<br><span>Live RTP<\/span><\/h1>/);
+      assert.match(html, roman
+        ? /id="rtp-notice-title">PREVIEW<\/strong>[^<]+simulated/
+        : /id="rtp-notice-title">प्रीव्यू<\/strong>[^<]+सिम्युलेटेड/);
+      assert.match(html, /<meta property="og:title" content="Jaiho91 Live RTP/);
       assert.match(html, /href="\/assets\/rtp\/arcade\.css"/);
       assert.match(html, /id="hero-deck"/);
       assert.match(html, /id="leaders"/);
       assert.match(html, /id="countdown"/);
-      assert.match(html, /<dialog id="game-dialog"/);
+      assert.match(html, /<dialog id="game-dialog"[^>]+aria-describedby="dialog-preview"/);
     }
     if (hindiPath === '/tutorials/') {
       assert.equal([...html.matchAll(/<video controls playsinline preload="none"/g)].length, 7);
