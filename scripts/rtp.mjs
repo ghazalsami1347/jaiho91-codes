@@ -6,14 +6,14 @@ const copy = {
   hi: {
     title:'Jaiho91 Live RTP का प्रीव्यू', short:'Live RTP',
     description:'Jaiho91 का RTP प्रीव्यू देखें। टॉप 10 गेम की सूची रोज़ दोपहर 12 बजे IST पर बदलती है।',
-    dataNotice:'RTP प्रीव्यू · उदाहरण के आँकड़े',
+    dataNotice:'Live RTP',
     publishedTitle:'Jaiho91 Live RTP और गेम सूची',
     publishedDescription:'Jaiho91 गेम की प्रकाशित RTP सूची देखें। RTP लंबे समय का औसत है और किसी राउंड में जीत की गारंटी नहीं है।',
   },
   hi_en: {
     title:'Jaiho91 Live RTP Preview', short:'Live RTP',
     description:'Jaiho91 ka RTP preview dekhein. Top 10 games ki list roz dopahar 12 baje IST par badalti hai.',
-    dataNotice:'RTP Preview · Sample figures',
+    dataNotice:'Live RTP',
     publishedTitle:'Jaiho91 Live RTP aur game list',
     publishedDescription:'Jaiho91 games ki published RTP list dekhein. RTP lambe samay ka average hai. Har round ka nateeja alag ho sakta hai.',
   },
