@@ -179,7 +179,9 @@ test('generates crawlable pages, working internal routes and an empty state with
     assert.ok(html.includes('hreflang="hi-Latn-IN" href="' + site + '/hi_en' + hindiPath + '"'));
     assert.ok(html.includes('hreflang="x-default" href="' + site + hindiPath + '"'));
     if (hindiPath === '/rtp/') {
-      assert.equal([...html.matchAll(/class="rtp-tile"/g)].length, 36);
+      const featured = html.split('data-rtp-ranked>')[1].split('<template')[0];
+      assert.equal([...featured.matchAll(/class="rtp-tile"/g)].length, 10);
+      assert.equal([...featured.matchAll(/class="rtp-value">[^<]*?(\d+\.\d+)%/g)].filter(match => Number(match[1]) >= 96 && Number(match[1]) <= 99).length, 10);
       assert.match(html, /id="rtp-notice"/);
     }
     if (hindiPath === '/tutorials/') {

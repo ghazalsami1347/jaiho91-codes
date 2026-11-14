@@ -50,11 +50,11 @@ export function rankGames(games, cycleKey) {
     .map((game, i) => ({ ...game, rank: i + 1 }));
 }
 export function rankFeaturedGames(games, cycleKey) {
-  const floor = 9701 + hash32(cycleKey + '|featured-floor') % 17;
+  const floor = 9600 + hash32(cycleKey + '|featured-floor') % 20;
+  const ceiling = 9880 + hash32(cycleKey + '|featured-ceiling') % 21;
   return rankGames(games, cycleKey).slice(0, TOP_GAME_COUNT).map(game => ({
     ...game,
-    // Preserve the seeded ranking while keeping each featured percentage above 97%.
-    basisPoints: floor + (TOP_GAME_COUNT - game.rank) * 8 + hash32(cycleKey + '|featured|' + game.id) % 7
+    basisPoints: Math.round(ceiling - (game.rank - 1) * (ceiling - floor) / (TOP_GAME_COUNT - 1))
   }));
 }
 export const percent = bp => (bp / 100).toFixed(2) + '%';

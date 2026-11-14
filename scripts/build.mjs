@@ -227,7 +227,7 @@ ${tracker(l)}
 <section class="wrap section faq"><div><h2>${l.questions}</h2><p>${l.questionsIntro}</p></div><div>${l.faq.map(([question, answer]) => `<details><summary>${h(question)}</summary><p>${h(answer)}</p></details>`).join('')}</div></section>`,
   }, {
     path:'/rtp/', title:rtp.title + ' | Jaiho91', breadcrumb:rtp.short, description:rtp.description,
-    body:`${pageIntro(l, rtp.short, rtp.title, rtp.description)}${rtpBody(rtp, games, h)}`,
+    body:`${pageIntro(l, rtp.short, rtp.title, rtp.description)}${rtpBody(rtp, games, h, now)}`,
   }, {
     path:'/codes/', title:l.codeTitle + ' | Jaiho91 Codes', breadcrumb:l.codes, description:l.codeMeta, lastmod,
     body:`${pageIntro(l, l.codes, l.codeTitle, l.codeIntro)}${tracker(l, true)}

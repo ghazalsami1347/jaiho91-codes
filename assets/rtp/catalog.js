@@ -6,9 +6,9 @@ const controls = page.querySelector('.rtp-controls');
 const search = page.querySelector('[data-rtp-search]');
 const category = page.querySelector('[data-rtp-category]');
 const savedOnly = page.querySelector('[data-rtp-saved]');
-const catalog = [...page.querySelectorAll('[data-rtp-catalog] .rtp-tile')];
-const demo = page.querySelector('[data-rtp-demo]');
 const ranked = page.querySelector('[data-rtp-ranked]');
+const catalog = [...ranked.children, ...page.querySelector('[data-rtp-reserve]').content.children];
+const games = catalog.map(card => ({id:card.dataset.game}));
 const count = page.querySelector('[data-rtp-count]');
 const empty = page.querySelector('[data-rtp-empty]');
 const cards = new Map(catalog.map(card => [card.dataset.game, card]));
@@ -22,7 +22,7 @@ try {
 function refresh() {
   const query = search.value.trim().toLowerCase();
   let visible = 0;
-  for (const card of catalog) {
+  for (const card of ranked.children) {
     const selected = saved.has(card.dataset.game);
     const button = card.querySelector('.rtp-save');
     button.textContent = selected ? copy.remove : copy.save;
@@ -32,24 +32,21 @@ function refresh() {
       || (savedOnly.checked && !selected);
     if (!card.hidden) visible += 1;
   }
-  for (const card of ranked.children) card.hidden = cards.get(card.dataset.game).hidden;
-  demo.hidden = ![...ranked.children].some(card => !card.hidden);
   count.textContent = copy.count + ' ' + visible;
   empty.hidden = visible > 0;
 }
 
 function renderDemo(cycle) {
-  const games = catalog.map(card => ({id:card.dataset.game}));
-  ranked.replaceChildren(...rankFeaturedGames(games, cycle.key).map(game => {
-    const card = cards.get(game.id).cloneNode(true);
-    const body = card.querySelector('.rtp-tile-copy');
-    body.querySelector('.rtp-save').remove();
-    const value = document.createElement('span');
-    value.className = 'rtp-value';
-    value.textContent = copy.demoValue + ' · ' + percent(game.basisPoints);
-    body.append(value);
+  const next = rankFeaturedGames(games, cycle.key).map(game => {
+    const card = cards.get(game.id);
+    card.querySelector('.rtp-value').textContent = copy.demoValue + ' · ' + percent(game.basisPoints);
     return card;
-  }));
+  });
+  if (next.some((card, index) => ranked.children[index] !== card)) {
+    const hadFocus = ranked.contains(document.activeElement);
+    ranked.replaceChildren(...next);
+    if (hadFocus) search.focus();
+  }
   refresh();
 }
 
