@@ -152,6 +152,7 @@ test('generates crawlable pages, working internal routes and an empty state with
   const preview = run('--origin=');
   assert.equal(preview.status, 0, preview.stderr);
   assert.match(await page('index.html'), /noindex,follow/);
+  assert.doesNotMatch(await page('index.html'), /googletagmanager\.com/);
   for (const prefix of ['', 'hi_en/']) {
     const homepage = await page(prefix + 'index.html');
     assert.ok(homepage.includes('href="/' + prefix + 'codes/" data-track="check_codes"'));
@@ -178,6 +179,9 @@ test('generates crawlable pages, working internal routes and an empty state with
   const descriptions = new Set();
   for (const url of routes) {
     const html = await page(url.pathname.slice(1) + 'index.html');
+    const head = html.match(/<head>(.*?)<\/head>/s)[1];
+    assert.equal([...html.matchAll(/googletagmanager\.com\/gtm\.js\?id=GTM-WMN5RM67/g)].length, 1);
+    assert.match(head, /<script async src="https:\/\/www\.googletagmanager\.com\/gtm\.js\?id=GTM-WMN5RM67"/);
     assert.equal(url.origin, site);
     assert.ok(html.includes(`rel="canonical" href="${url.href}"`));
     const roman = url.pathname.startsWith('/hi_en/');

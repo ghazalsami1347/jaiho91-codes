@@ -24,6 +24,7 @@ if (basePath && (!/^\/[A-Za-z0-9._-]+(?:\/[A-Za-z0-9._-]+)*$/.test(basePath) || 
 }
 const vercelBuild = process.argv.includes('--vercel');
 const production = process.argv.includes('--production') || (vercelBuild && process.env.VERCEL_ENV === 'production');
+const tagManager = production && !analytics;
 const vercelDomain = vercelBuild && process.env.VERCEL_PROJECT_PRODUCTION_URL;
 const configuredOrigin = arg?.slice('--origin='.length) ?? (
   (await json('site.json')).origin || (vercelDomain ? 'https://' + vercelDomain : '')
@@ -132,6 +133,12 @@ function layout(l, { path, title, description, body, article, breadcrumb, lastmo
 <html lang="${l.lang}">
 <head>
 <meta charset="utf-8">
+${tagManager ? `<script async src="https://www.googletagmanager.com/gtm.js?id=GTM-WMN5RM67"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+</script>` : ''}
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${h(title)}</title>
 <meta name="description" content="${h(description)}">
@@ -286,7 +293,7 @@ ${guide.slug === 'how-to-redeem' ? `<a class="text-link" href="${pathFor(l, tuto
     body:`${pageIntro(l, l.about, l.aboutTitle, l.aboutIntro)}<section class="wrap section prose">${sectionText(l.aboutSections)}</section>`,
   }, {
     path:'/privacy/', title:l.privacy + ' | Jaiho91 Codes', breadcrumb:l.privacy, description:l.privacyIntro,
-    body:`${pageIntro(l, l.privacy, l.privacy, l.privacyIntro)}<section class="wrap section prose">${sectionText(l.privacySections)}${analytics ? `<h2>Analytics</h2><p>${l.analyticsPrivacy}</p>` : ''}</section>`,
+    body:`${pageIntro(l, l.privacy, l.privacy, l.privacyIntro)}<section class="wrap section prose">${sectionText(l.privacySections)}${tagManager ? `<h2>Google Tag Manager</h2><p>${l.tagManagerPrivacy} <a class="text-link" href="https://policies.google.com/privacy">${l.googlePrivacy}</a></p>` : ''}${analytics ? `<h2>Analytics</h2><p>${l.analyticsPrivacy}</p>` : ''}</section>`,
   });
   return result;
 }
