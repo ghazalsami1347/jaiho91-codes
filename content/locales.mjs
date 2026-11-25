@@ -7,7 +7,7 @@ export const locales = {
     bonusDismiss:'बोनस पॉपअप बंद करें',
     bonusSignup:'बोनस अपडेट के लिए साइन अप करें',
     bonusFormNotice:'बोनस अपडेट पाने के लिए अपना मोबाइल नंबर दें।',
-    bonusPhone:'मोबाइल नंबर',
+    bonusPhone:'मोबाइल नंबर (10 अंक)',
     bonusConsent:'मैं इस नंबर पर बोनस अपडेट पाने के लिए सहमत हूँ।',
     bonusFeedback:{
       sending:'भेज रहे हैं…', saved:'आपका साइनअप हो गया।', invalid:'10 अंकों का भारतीय मोबाइल नंबर डालें।',
@@ -63,7 +63,7 @@ export const locales = {
     bonusDismiss:'Bonus popup band karein',
     bonusSignup:'Bonus updates ke liye sign up karein',
     bonusFormNotice:'Bonus updates paane ke liye apna mobile number dein.',
-    bonusPhone:'Mobile number',
+    bonusPhone:'Mobile number (10 digits)',
     bonusConsent:'Main is number par bonus updates paane se sehmat hoon.',
     bonusFeedback:{
       sending:'Bhej rahe hain…', saved:'Aapka signup ho gaya.', invalid:'10 ankon ka Indian mobile number daalein.',

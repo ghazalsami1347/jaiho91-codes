@@ -105,13 +105,16 @@ function bonusPopup(l) {
 <p id="bonus-popup-intro">${h(bonusSignupForm ? l.bonusFormNotice : l.bonusIntro)}</p>
 ${bonusSignupForm ? `<form class="bonus-form" action="${h(bonusSignupForm)}" method="post" data-messages="${h(JSON.stringify(l.bonusFeedback))}">
 <label for="bonus-phone">${h(l.bonusPhone)}</label>
-<input id="bonus-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel-national" maxlength="20" required>
+<div class="bonus-phone-field">
+<span id="bonus-phone-prefix">+91</span>
+<input id="bonus-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel-national" aria-describedby="bonus-phone-prefix" maxlength="20" required>
+</div>
 <div hidden><input name="website" tabindex="-1" autocomplete="off"></div>
 <label class="bonus-consent"><input name="consent" type="checkbox" value="1" required> <span>${h(l.bonusConsent)}</span></label>
 <button type="submit" class="button">${h(l.bonusSignup)}</button>
 </form>
 <p class="bonus-status" role="status" tabindex="-1"></p>
-<p class="bonus-privacy">${h(l.bonusFormPrivacy)} <a href="${pathFor(l, '/privacy/')}" data-bonus-close>${h(l.privacy)}</a></p>` : ''}
+<p class="bonus-privacy"><a href="${pathFor(l, '/privacy/')}" data-bonus-close>${h(l.privacy)}</a></p>` : ''}
 <a class="button secondary bonus-channel" href="${sourceChannel}" data-track="source_click" data-bonus-close target="_blank" rel="noopener noreferrer">${h(l.bonusChannel)} ${icon('out')}</a>
 </div>
 </dialog>`;

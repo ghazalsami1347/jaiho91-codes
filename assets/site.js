@@ -82,6 +82,11 @@ if (bonusPopup?.showModal) {
     const messages = JSON.parse(form.dataset.messages);
     const status = bonusPopup.querySelector('.bonus-status');
     const button = form.querySelector('button');
+    const phone = form.elements.phone;
+    phone.addEventListener('input', () => {
+      const compact = phone.value.replace(/[\s()-]/g, '');
+      if (/^\+91\d{10}$/.test(compact)) phone.value = compact.slice(3);
+    });
     form.addEventListener('submit', async event => {
       event.preventDefault();
       if (button.disabled) return;

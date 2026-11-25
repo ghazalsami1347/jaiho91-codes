@@ -74,7 +74,11 @@ html:has(.bonus-popup[open]){overflow:hidden}
 #bonus-popup-intro{font-size:.94rem;margin:8px 0 20px}
 .bonus-form{display:grid;gap:10px}
 .bonus-form>label:first-child{font-size:.88rem;font-weight:800}
-.bonus-form input[type=tel]{min-width:0;width:100%;min-height:48px;padding:8px 12px;border:1px solid #885376;border-radius:8px;background:var(--bg);color:var(--text);font-size:1rem}
+.bonus-phone-field{display:flex;align-items:stretch;min-height:48px;border:1px solid #885376;border-radius:8px;background:var(--bg)}
+.bonus-phone-field:focus-within{outline:2px solid var(--accent);outline-offset:3px}
+#bonus-phone-prefix{display:flex;align-items:center;padding-inline:12px;border-inline-end:1px solid var(--line);border-radius:7px 0 0 7px;background:var(--subtle);color:var(--text);font-size:.94rem;font-weight:800}
+#bonus-phone{flex:1;min-width:0;width:100%;padding:8px 12px;border:0;border-radius:0 7px 7px 0;background:transparent;color:var(--text);font-size:1rem}
+#bonus-phone:focus-visible{outline:none}
 .bonus-consent{display:flex;align-items:center;gap:10px;min-height:44px;font-size:.87rem;cursor:pointer}
 .bonus-consent input{flex:none;width:18px;height:18px;margin:0;accent-color:var(--accent)}
 .bonus-dismiss{position:absolute;top:14px;inset-inline-end:14px;display:grid;place-items:center;width:44px;height:44px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--text)}

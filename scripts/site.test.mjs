@@ -194,8 +194,11 @@ test('generates crawlable pages, working internal routes and an empty state with
     if (['/', '/codes/', '/rtp/'].includes(hindiPath)) {
       assert.ok(bonus, `Bonus dialog is rendered on ${url.pathname}`);
       assert.ok(bonus.includes(`action="${signupUrl}" method="post"`));
+      assert.match(bonus, /id="bonus-phone-prefix">\+91</);
+      assert.match(bonus, /name="phone"[^>]*aria-describedby="bonus-phone-prefix"/);
       assert.match(bonus, /name="consent"[^>]*required/);
       assert.match(bonus, /class="bonus-dismiss"/);
+      assert.doesNotMatch(bonus, /Google Sheets/);
       assert.ok(!bonus.includes(`href="${signupUrl}"`));
     } else {
       assert.equal(bonus, undefined);
