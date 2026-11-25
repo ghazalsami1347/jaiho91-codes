@@ -144,6 +144,10 @@ test('generates crawlable pages, working internal routes and an empty state with
     env:{ ...process.env, VERCEL_ENV:environment, VERCEL_PROJECT_PRODUCTION_URL:'jaiho91-preview.test' },
   });
   const page = path => readFile(join(temp, 'dist', path), 'utf8');
+  const signupUrl = 'https://script.google.com/macros/s/test-signup/exec';
+  const siteConfigPath = join(temp, 'site.json');
+  const siteConfig = JSON.parse(await readFile(siteConfigPath, 'utf8'));
+  await writeFile(siteConfigPath, JSON.stringify({ ...siteConfig, bonusSignupForm:signupUrl }));
   const settingsFile = join(temp, 'content', 'rtp.json');
   const settings = JSON.parse(await readFile(settingsFile, 'utf8'));
   await writeFile(settingsFile, JSON.stringify({ ...settings, percentages:{} }));
@@ -186,6 +190,16 @@ test('generates crawlable pages, working internal routes and an empty state with
     assert.ok(html.includes(`rel="canonical" href="${url.href}"`));
     const roman = url.pathname.startsWith('/hi_en/');
     const hindiPath = roman ? url.pathname.slice('/hi_en'.length) : url.pathname;
+    const bonus = html.match(/<dialog\b[^>]*data-bonus-popup[^>]*>.*?<\/dialog>/s)?.[0];
+    if (['/', '/codes/', '/rtp/'].includes(hindiPath)) {
+      assert.ok(bonus, `Bonus dialog is rendered on ${url.pathname}`);
+      assert.ok(bonus.includes(`action="${signupUrl}" method="post"`));
+      assert.match(bonus, /name="consent"[^>]*required/);
+      assert.match(bonus, /class="bonus-dismiss"/);
+      assert.ok(!bonus.includes(`href="${signupUrl}"`));
+    } else {
+      assert.equal(bonus, undefined);
+    }
     assert.match(html, roman ? /<html lang="hi-Latn-IN">/ : /<html lang="hi-IN">/);
     assert.ok(html.includes('hreflang="hi-IN" href="' + site + hindiPath + '"'));
     assert.ok(html.includes('hreflang="hi-Latn-IN" href="' + site + '/hi_en' + hindiPath + '"'));

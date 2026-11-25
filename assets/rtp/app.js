@@ -135,7 +135,7 @@ document.addEventListener('click',event => {
 $('#dialog-close').addEventListener('click',() => $('#game-dialog').close());
 $('#game-dialog').addEventListener('click',event => { if(event.target === $('#game-dialog')) { const r=event.target.getBoundingClientRect(); if(event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom) event.target.close(); } });
 document.addEventListener('keydown',event => {
-  if(event.key === '/' && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName) && !$('#game-dialog').open && !event.metaKey && !event.ctrlKey && !event.altKey) { event.preventDefault(); $('#search').focus(); }
+  if(event.key === '/' && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName) && !document.querySelector('dialog[open]') && !event.metaKey && !event.ctrlKey && !event.altKey) { event.preventDefault(); $('#search').focus(); }
 });
 document.addEventListener('visibilitychange',() => { if (document.hidden) clock?.stop(); else clock?.start(); });
 window.addEventListener('focus',() => clock?.sync());

@@ -62,20 +62,33 @@ html[lang="hi-IN"] .hero h1{font-size:clamp(2.55rem,7.5vw,5.7rem)}
 .download-panel p{margin-top:8px;font-size:.87rem}
 .download-button svg{width:18px;height:18px}
 .install-popup{display:none}
+html:has(.bonus-popup[open]){overflow:hidden}
 .bonus-popup{
-  position:fixed;inset-inline-end:max(12px,env(safe-area-inset-right));bottom:max(12px,env(safe-area-inset-bottom));
-  z-index:7;width:min(400px,calc(100% - 24px));max-height:calc(100dvh - 24px);overflow:auto;
-  padding:18px;border:1px solid #885376;border-radius:14px;background:var(--panel);box-shadow:0 12px 36px #08040caa;
+  width:min(460px,calc(100% - 32px));max-height:calc(100dvh - 32px);overflow:auto;overscroll-behavior:contain;
+  padding:0;border:1px solid #885376;border-radius:18px;background:var(--panel);color:var(--text);box-shadow:0 20px 70px #08040ccc;
 }
-.bonus-popup .glyph{margin-bottom:10px}
-.bonus-popup h2{font-size:1.32rem}
-.bonus-popup p{font-size:.9rem;margin:6px 0 14px}
-.bonus-actions{display:flex;flex-wrap:wrap;gap:8px}
-.bonus-actions .button{font-size:.86rem;white-space:normal}
-.bonus-dismiss{position:absolute;top:6px;inset-inline-end:6px;display:grid;place-items:center;width:44px;height:44px;border:0;border-radius:8px;background:transparent;color:var(--dim)}
+.bonus-popup::backdrop{background:#0a070de0}
+.bonus-content{position:relative;padding:clamp(22px,5vw,32px);background:radial-gradient(ellipse at top right,#43223c,var(--panel) 65%)}
+.bonus-popup .glyph{margin-bottom:12px}
+.bonus-popup h2{font-size:clamp(1.55rem,4.6vw,1.9rem)}
+#bonus-popup-intro{font-size:.94rem;margin:8px 0 20px}
+.bonus-form{display:grid;gap:10px}
+.bonus-form>label:first-child{font-size:.88rem;font-weight:800}
+.bonus-form input[type=tel]{min-width:0;width:100%;min-height:48px;padding:8px 12px;border:1px solid #885376;border-radius:8px;background:var(--bg);color:var(--text);font-size:1rem}
+.bonus-consent{display:flex;align-items:center;gap:10px;min-height:44px;font-size:.87rem;cursor:pointer}
+.bonus-consent input{flex:none;width:18px;height:18px;margin:0;accent-color:var(--accent)}
+.bonus-dismiss{position:absolute;top:14px;inset-inline-end:14px;display:grid;place-items:center;width:44px;height:44px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--text)}
 .bonus-dismiss:hover{background:var(--subtle);color:var(--text)}
-.bonus-popup .bonus-privacy{margin:10px 0 0;font-size:.78rem}
+.bonus-popup .bonus-status{margin-top:12px;font-size:.9rem;color:var(--text)}
+.bonus-popup .bonus-status:empty{margin:0}
+.bonus-popup .bonus-privacy{margin:12px 0 0;font-size:.78rem}
 .bonus-privacy a{text-decoration:underline}
+.bonus-channel{width:100%;margin-top:16px;font-size:.88rem;white-space:normal}
+@media(max-width:640px){
+  .bonus-popup{width:100%;height:100vh;height:100dvh;max-width:none;max-height:none;border:0;border-radius:0}
+  .bonus-content{min-height:100%;align-content:center;padding-top:max(70px,calc(env(safe-area-inset-top) + 62px));padding-bottom:max(26px,env(safe-area-inset-bottom))}
+  .bonus-dismiss{top:max(14px,env(safe-area-inset-top));inset-inline-end:max(14px,env(safe-area-inset-right))}
+}
 .hero-art{position:relative;display:grid;place-items:center;min-width:0;isolation:isolate}
 .hero-art img{width:min(78%,344px);aspect-ratio:1;object-fit:contain;transform:rotate(-9deg);filter:drop-shadow(0 19px 22px #09050caa);z-index:1}
 .orbit{position:absolute;inset:auto;width:91%;max-width:440px;aspect-ratio:1.55;border:1px solid #a9579570;border-radius:50%;transform:rotate(-28deg)}
@@ -298,7 +311,7 @@ html[lang="hi-IN"] .hero h1{font-size:clamp(2.55rem,7.5vw,5.7rem)}
 @media(prefers-reduced-motion:no-preference){
 html{scroll-behavior:smooth}
 .install-popup:not([hidden]){animation:install-enter .24s ease-out}
-.bonus-popup:not([hidden]){animation:bonus-enter .24s ease-out}
+.bonus-popup[open]{animation:bonus-enter .24s ease-out}
 @keyframes bonus-enter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 @keyframes install-enter{from{opacity:0;transform:translateY(-9px)}to{opacity:1;transform:translateY(0)}}
 .button,.tier-switch span,.code-value,.copy,.guide-card{transition:background-color .18s ease,border-color .18s ease,color .18s ease,box-shadow .18s ease}

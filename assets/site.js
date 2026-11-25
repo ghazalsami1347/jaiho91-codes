@@ -36,34 +36,78 @@ if (installPopup) {
 }
 
 const bonusPopup = document.querySelector('[data-bonus-popup]');
-if (bonusPopup) {
+if (bonusPopup?.showModal) {
   const key = 'jaiho91-bonus-popup-dismissed';
-  let dismissed = false;
-  try { dismissed = sessionStorage.getItem(key) === '1'; } catch {}
+  let dismissed = wasBonusDismissed();
+  const form = bonusPopup.querySelector('.bonus-form');
 
-  function dismissBonusPopup(restoreFocus) {
-    const shouldRestoreFocus = restoreFocus && bonusPopup.contains(document.activeElement);
-    dismissed = true;
-    bonusPopup.hidden = true;
-    try { sessionStorage.setItem(key, '1'); } catch {}
-    if (shouldRestoreFocus) document.querySelector('#main').focus({ preventScroll:true });
+  function wasBonusDismissed() {
+    try { return sessionStorage.getItem(key) === '1'; } catch { return false; }
   }
 
-  bonusPopup.querySelector('.bonus-dismiss').addEventListener('click', () => dismissBonusPopup(true));
-  bonusPopup.querySelectorAll('.bonus-actions a').forEach(link => {
-    link.addEventListener('click', () => dismissBonusPopup(true));
-  });
-  document.addEventListener('keydown', event => {
-    if (event.key === 'Escape' && !bonusPopup.hidden && !nav.hasAttribute('data-open') && !document.querySelector('dialog[open]')) {
-      dismissBonusPopup(true);
+  function showBonusPopup() {
+    if (dismissed || wasBonusDismissed() || bonusPopup.open) return;
+    const otherDialog = document.querySelector('dialog[open]');
+    if (otherDialog) {
+      otherDialog.addEventListener('close', showBonusPopup, { once:true });
+      return;
     }
+    bonusPopup.showModal();
+  }
+
+  function dismissBonusPopup() {
+    dismissed = true;
+    try { sessionStorage.setItem(key, '1'); } catch {}
+    bonusPopup.close();
+    if (document.activeElement === document.body) document.querySelector('#main').focus({ preventScroll:true });
+  }
+
+  bonusPopup.querySelector('.bonus-dismiss').addEventListener('click', dismissBonusPopup);
+  bonusPopup.addEventListener('click', event => {
+    if (event.target === bonusPopup) dismissBonusPopup();
+  });
+  bonusPopup.querySelectorAll('[data-bonus-close]').forEach(link => {
+    link.addEventListener('click', dismissBonusPopup);
+  });
+  bonusPopup.addEventListener('cancel', event => {
+    event.preventDefault();
+    dismissBonusPopup();
   });
   window.addEventListener('pageshow', () => {
-    try {
-      if (sessionStorage.getItem(key) === '1') dismissBonusPopup(false);
-    } catch {}
+    if (bonusPopup.open && wasBonusDismissed()) dismissBonusPopup();
   });
-  if (!dismissed) setTimeout(() => { bonusPopup.hidden = dismissed; }, 2200);
+  if (!dismissed) setTimeout(showBonusPopup, 2200);
+
+  if (form) {
+    const messages = JSON.parse(form.dataset.messages);
+    const status = bonusPopup.querySelector('.bonus-status');
+    const button = form.querySelector('button');
+    form.addEventListener('submit', async event => {
+      event.preventDefault();
+      if (button.disabled) return;
+      const body = new URLSearchParams(new FormData(form));
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 15000);
+      button.disabled = true;
+      status.textContent = messages.sending;
+      try {
+        const response = await fetch(form.action, { method:'POST', body, credentials:'omit', signal:controller.signal });
+        if (!response.ok) throw new Error('Signup request failed');
+        const { result } = await response.json();
+        status.textContent = Object.hasOwn(messages, result) ? messages[result] : messages.retry;
+        if (result === 'saved') {
+          form.reset();
+          form.hidden = true;
+          if (bonusPopup.open) status.focus({ preventScroll:true });
+        }
+      } catch {
+        status.textContent = messages.retry;
+      } finally {
+        clearTimeout(timeout);
+        button.disabled = false;
+      }
+    });
+  }
 }
 
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');

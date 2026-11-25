@@ -97,17 +97,24 @@ function installPopup(l) {
 }
 
 function bonusPopup(l) {
-  return `<aside class="bonus-popup" data-bonus-popup aria-labelledby="bonus-popup-title" hidden>
-<button class="bonus-dismiss" type="button" aria-label="${h(l.bonusDismiss)}">${icon('close')}</button>
+  return `<dialog class="bonus-popup" data-bonus-popup aria-labelledby="bonus-popup-title" aria-describedby="bonus-popup-intro">
+<div class="bonus-content">
+<button class="bonus-dismiss" type="button" aria-label="${h(l.bonusDismiss)}" autofocus>${icon('close')}</button>
 <span class="glyph">${icon('ticket')}</span>
 <h2 id="bonus-popup-title">${h(l.bonusTitle)}</h2>
-<p>${h(l.bonusIntro)}</p>
-<div class="bonus-actions">
-<a class="button" href="${sourceChannel}" data-track="source_click" target="_blank" rel="noopener noreferrer">${h(l.bonusChannel)} ${icon('out')}</a>
-${bonusSignupForm ? `<a class="button secondary" href="${h(bonusSignupForm)}" target="_blank" rel="noopener noreferrer">${h(l.bonusSignup)}</a>` : ''}
+<p id="bonus-popup-intro">${h(bonusSignupForm ? l.bonusFormNotice : l.bonusIntro)}</p>
+${bonusSignupForm ? `<form class="bonus-form" action="${h(bonusSignupForm)}" method="post" data-messages="${h(JSON.stringify(l.bonusFeedback))}">
+<label for="bonus-phone">${h(l.bonusPhone)}</label>
+<input id="bonus-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel-national" maxlength="20" required>
+<div hidden><input name="website" tabindex="-1" autocomplete="off"></div>
+<label class="bonus-consent"><input name="consent" type="checkbox" value="1" required> <span>${h(l.bonusConsent)}</span></label>
+<button type="submit" class="button">${h(l.bonusSignup)}</button>
+</form>
+<p class="bonus-status" role="status" tabindex="-1"></p>
+<p class="bonus-privacy">${h(l.bonusFormPrivacy)} <a href="${pathFor(l, '/privacy/')}" data-bonus-close>${h(l.privacy)}</a></p>` : ''}
+<a class="button secondary bonus-channel" href="${sourceChannel}" data-track="source_click" data-bonus-close target="_blank" rel="noopener noreferrer">${h(l.bonusChannel)} ${icon('out')}</a>
 </div>
-${bonusSignupForm ? `<p class="bonus-privacy">${h(l.bonusFormNotice)} <a href="${pathFor(l, '/privacy/')}">${h(l.privacy)}</a></p>` : ''}
-</aside>`;
+</dialog>`;
 }
 
 function layout(l, { path, title, description, body, article, breadcrumb, lastmod, index = true }) {
@@ -203,7 +210,7 @@ ${brand(l)}
 </div></header>
 ${path === '/' || path === androidPath ? installPopup(l) : ''}
 <main id="main" tabindex="-1">${body}</main>
-${path === '/codes/' || arcade ? bonusPopup(l) : ''}
+${['/', '/codes/', '/rtp/'].includes(path) ? bonusPopup(l) : ''}
 <footer class="site-footer"><div class="wrap footer-grid"><div>${brand(l)}<p>${l.footer}</p></div>
 <nav aria-label="${l.prefix ? 'Footer links' : 'फ़ुटर लिंक'}">${navLinks([...primary, ...utility])}<a href="${pathFor(l, '/about/')}">${l.about}</a><a href="${pathFor(l, '/privacy/')}">${l.privacy}</a></nav></div>
 <div class="wrap footer-bottom"><span>Jaiho91 · ${l.india}</span><span>${l.adults}</span></div></footer>

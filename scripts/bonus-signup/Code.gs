@@ -62,6 +62,18 @@ function doGet() {
 </html>`).setTitle('Jaiho91 Bonus Updates').addMetaTag('viewport', 'width=device-width, initial-scale=1');
 }
 
+function doPost(event) {
+  const fields = event?.parameter || {};
+  let result = 'retry';
+  try {
+    result = submitSignup(fields.phone, fields.consent === '1', fields.website);
+  } catch {
+    // Keep public responses free of Sheet details.
+  }
+  return ContentService.createTextOutput(JSON.stringify({ result }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
 function submitSignup(phone, consent, website) {
   if (website) return 'saved';
   if (consent !== true) return 'consent';
