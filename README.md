@@ -30,7 +30,7 @@ Run the checks with `node --test scripts/site.test.mjs`. The Motion mini bundle 
 
 ## Manage Jaiho91 codes
 
-The bonus popup appears on the Promo Codes and RTP pages and links to the official Telegram channel. To enable phone signup, publish a Google Form for responders, link its responses to a private Google Sheet, and put the responder link in `bonusSignupForm` in `site.json`. Keep response summaries private. In the form, explain that Jaiho91 will use the submitted phone number for bonus updates. Leave the link blank to show the Telegram option alone.
+The bonus popup appears on the Promo Codes and RTP pages and links to the official Telegram channel. To enable phone signup, set the response Sheet’s sharing to **Restricted**, then copy [Code.gs](scripts/bonus-signup/Code.gs) into its Apps Script editor and set the Sheet ID there. Deploy the script as a **Web app** running as the Sheet owner with **Anyone** allowed to open the signup page. Put the deployment URL ending in `/exec` in `bonusSignupForm` in `site.json`. Leave it blank to show the Telegram option alone.
 
 Edit [content/codes.json](content/codes.json). It drives the current code tracker and archive on the Promo Codes page in both languages.
 

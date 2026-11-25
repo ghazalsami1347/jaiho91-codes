@@ -28,8 +28,8 @@ const tagManager = production && !analytics;
 const vercelDomain = vercelBuild && process.env.VERCEL_PROJECT_PRODUCTION_URL;
 const settings = await json('site.json');
 const bonusSignupForm = settings.bonusSignupForm?.trim() ?? '';
-if (bonusSignupForm && !/^https:\/\/(?:forms\.gle\/[A-Za-z0-9_-]+|docs\.google\.com\/forms\/d\/(?:e\/)?[A-Za-z0-9_-]+\/viewform)\/?$/.test(bonusSignupForm)) {
-  throw new Error('Set bonusSignupForm in site.json to a Google Forms responder link, without query parameters.');
+if (bonusSignupForm && !/^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec\/?$/.test(bonusSignupForm)) {
+  throw new Error('Set bonusSignupForm in site.json to the Apps Script web app URL ending in /exec.');
 }
 const configuredOrigin = arg?.slice('--origin='.length) ?? (
   settings.origin || (vercelDomain ? 'https://' + vercelDomain : '')
