@@ -30,6 +30,8 @@ Run the checks with `node --test scripts/site.test.mjs`. The Motion mini bundle 
 
 ## Manage Jaiho91 codes
 
+The bonus popup appears on the Promo Codes and RTP pages and links to the official Telegram channel. To enable phone signup, publish a Google Form for responders, link its responses to a private Google Sheet, and put the responder link in `bonusSignupForm` in `site.json`. Keep response summaries private. In the form, explain that Jaiho91 will use the submitted phone number for bonus updates. Leave the link blank to show the Telegram option alone.
+
 Edit [content/codes.json](content/codes.json). It drives the current code tracker and archive on the Promo Codes page in both languages.
 
 1. Find a dated announcement from the provider. Confirm the exact code, tier, deadline, and any eligibility conditions. Record the direct public post URL and add its domain or channel to the approved source list if needed.

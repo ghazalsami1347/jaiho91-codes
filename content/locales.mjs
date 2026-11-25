@@ -1,6 +1,13 @@
 export const locales = {
   hi: {
     lang:'hi-IN', prefix:'', label:'हिन्दी',
+    bonusTitle:'Jaiho91 के बोनस अपडेट',
+    bonusIntro:'नए बोनस और ऑफ़र की जानकारी आधिकारिक Telegram चैनल पर देखें।',
+    bonusChannel:'Telegram पर देखें',
+    bonusDismiss:'बोनस पॉपअप बंद करें',
+    bonusSignup:'बोनस अपडेट के लिए साइन अप करें',
+    bonusFormNotice:'साइन अप करने के लिए Google Forms पर अपना मोबाइल नंबर दें।',
+    bonusFormPrivacy:'बोनस अपडेट के लिए फ़ॉर्म के जवाब Google Sheets में रखे जाते हैं।',
     home:'होम', codes:'प्रोमो कोड', android:'Android APK', guides:'गाइड', tutorials:'वीडियो गाइड',
     about:'हमारे बारे में', privacy:'गोपनीयता', skip:'मुख्य सामग्री पर जाएँ', menu:'मेन्यू खोलें या बंद करें',
     download:'APK डाउनलोड करें', installTitle:'Jaiho91 इंस्टॉल करें', installAction:'इंस्टॉल करें', dismissInstall:'इंस्टॉल पॉपअप बंद करें', check:'कोड देखें', androidHelp:'APK डाउनलोड करने में मदद',
@@ -44,6 +51,13 @@ export const locales = {
   },
   hi_en: {
     lang:'hi-Latn-IN', prefix:'/hi_en', label:'Roman Hindi',
+    bonusTitle:'Jaiho91 ke bonus updates',
+    bonusIntro:'Naye bonuses aur offers ki jaankari official Telegram channel par dekhein.',
+    bonusChannel:'Telegram par dekhein',
+    bonusDismiss:'Bonus popup band karein',
+    bonusSignup:'Bonus updates ke liye sign up karein',
+    bonusFormNotice:'Sign up karne ke liye Google Forms par apna mobile number dein.',
+    bonusFormPrivacy:'Bonus updates ke liye form ke jawaab Google Sheets mein rakhe jaate hain.',
     home:'Home', codes:'Promo Codes', android:'Android APK', guides:'Guide', tutorials:'Video guide',
     about:'Hamare baare mein', privacy:'Privacy', skip:'Seedhe main content par jaayein', menu:'Menu kholein ya band karein',
     download:'APK download karein', installTitle:'Jaiho91 install karein', installAction:'Install', dismissInstall:'Install popup band karein', check:'Code dekhein', androidHelp:'APK download mein madad',

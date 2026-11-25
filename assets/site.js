@@ -35,6 +35,37 @@ if (installPopup) {
   updateInstallPopup();
 }
 
+const bonusPopup = document.querySelector('[data-bonus-popup]');
+if (bonusPopup) {
+  const key = 'jaiho91-bonus-popup-dismissed';
+  let dismissed = false;
+  try { dismissed = sessionStorage.getItem(key) === '1'; } catch {}
+
+  function dismissBonusPopup(restoreFocus) {
+    const shouldRestoreFocus = restoreFocus && bonusPopup.contains(document.activeElement);
+    dismissed = true;
+    bonusPopup.hidden = true;
+    try { sessionStorage.setItem(key, '1'); } catch {}
+    if (shouldRestoreFocus) document.querySelector('#main').focus({ preventScroll:true });
+  }
+
+  bonusPopup.querySelector('.bonus-dismiss').addEventListener('click', () => dismissBonusPopup(true));
+  bonusPopup.querySelectorAll('.bonus-actions a').forEach(link => {
+    link.addEventListener('click', () => dismissBonusPopup(true));
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && !bonusPopup.hidden && !nav.hasAttribute('data-open') && !document.querySelector('dialog[open]')) {
+      dismissBonusPopup(true);
+    }
+  });
+  window.addEventListener('pageshow', () => {
+    try {
+      if (sessionStorage.getItem(key) === '1') dismissBonusPopup(false);
+    } catch {}
+  });
+  if (!dismissed) setTimeout(() => { bonusPopup.hidden = dismissed; }, 2200);
+}
+
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 let motion;
 if (!reducedMotion.matches) {

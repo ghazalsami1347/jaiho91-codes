@@ -62,6 +62,20 @@ html[lang="hi-IN"] .hero h1{font-size:clamp(2.55rem,7.5vw,5.7rem)}
 .download-panel p{margin-top:8px;font-size:.87rem}
 .download-button svg{width:18px;height:18px}
 .install-popup{display:none}
+.bonus-popup{
+  position:fixed;inset-inline-end:max(12px,env(safe-area-inset-right));bottom:max(12px,env(safe-area-inset-bottom));
+  z-index:7;width:min(400px,calc(100% - 24px));max-height:calc(100dvh - 24px);overflow:auto;
+  padding:18px;border:1px solid #885376;border-radius:14px;background:var(--panel);box-shadow:0 12px 36px #08040caa;
+}
+.bonus-popup .glyph{margin-bottom:10px}
+.bonus-popup h2{font-size:1.32rem}
+.bonus-popup p{font-size:.9rem;margin:6px 0 14px}
+.bonus-actions{display:flex;flex-wrap:wrap;gap:8px}
+.bonus-actions .button{font-size:.86rem;white-space:normal}
+.bonus-dismiss{position:absolute;top:6px;inset-inline-end:6px;display:grid;place-items:center;width:44px;height:44px;border:0;border-radius:8px;background:transparent;color:var(--dim)}
+.bonus-dismiss:hover{background:var(--subtle);color:var(--text)}
+.bonus-popup .bonus-privacy{margin:10px 0 0;font-size:.78rem}
+.bonus-privacy a{text-decoration:underline}
 .hero-art{position:relative;display:grid;place-items:center;min-width:0;isolation:isolate}
 .hero-art img{width:min(78%,344px);aspect-ratio:1;object-fit:contain;transform:rotate(-9deg);filter:drop-shadow(0 19px 22px #09050caa);z-index:1}
 .orbit{position:absolute;inset:auto;width:91%;max-width:440px;aspect-ratio:1.55;border:1px solid #a9579570;border-radius:50%;transform:rotate(-28deg)}
@@ -284,6 +298,8 @@ html[lang="hi-IN"] .hero h1{font-size:clamp(2.55rem,7.5vw,5.7rem)}
 @media(prefers-reduced-motion:no-preference){
 html{scroll-behavior:smooth}
 .install-popup:not([hidden]){animation:install-enter .24s ease-out}
+.bonus-popup:not([hidden]){animation:bonus-enter .24s ease-out}
+@keyframes bonus-enter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 @keyframes install-enter{from{opacity:0;transform:translateY(-9px)}to{opacity:1;transform:translateY(0)}}
 .button,.tier-switch span,.code-value,.copy,.guide-card{transition:background-color .18s ease,border-color .18s ease,color .18s ease,box-shadow .18s ease}
 .guide-card:has(a:hover){border-color:#a66790;box-shadow:0 10px 24px #0a050c55}
