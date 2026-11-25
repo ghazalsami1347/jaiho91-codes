@@ -1,4 +1,5 @@
 import { mkdir, readFile, writeFile, cp } from 'node:fs/promises';
+import { hash } from 'node:crypto';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { locales, pathFor } from '../content/locales.mjs';
@@ -9,6 +10,11 @@ import { tiers, validateRegistry, listCodes } from './registry.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const out = resolve(root, 'dist');
+const [siteCss, siteScript] = await Promise.all(['site.css', 'site.js'].map(async name => {
+  const path = 'assets/' + name;
+  const version = hash('sha256', await readFile(resolve(root, path))).slice(0, 12);
+  return '/' + path + '?v=' + version;
+}));
 const analytics = process.argv.includes('--analytics');
 const json = async path => JSON.parse(await readFile(resolve(root, path), 'utf8'));
 const now = Date.now();
@@ -193,8 +199,8 @@ ${origin ? `<meta property="og:url" content="${h(url)}">` : ''}
 <meta name="twitter:image:alt" content="${h(l.footer)}">
 <link rel="icon" href="/assets/mark.png" type="image/png" sizes="76x76">
 <link rel="preload" href="/assets/manrope.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/site.css">
-<script type="module" src="/assets/site.js"></script>
+<link rel="stylesheet" href="${siteCss}">
+<script type="module" src="${siteScript}"></script>
 ${arcade ? `<link rel="stylesheet" href="/assets/rtp/arcade.css">
 <link rel="stylesheet" href="/assets/rtp/integration.css">
 <script type="module" src="/assets/rtp/app.js"></script>` : ''}
