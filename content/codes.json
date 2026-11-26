@@ -1,10 +1,38 @@
 {
-  "lastReviewedAt": "2026-11-25T12:06:16+05:30",
+  "lastReviewedAt": "2026-11-26T12:06:33+05:30",
   "sources": {
     "www.jaiho91.com": "Jaiho91 website",
     "t.me/s/jaiho91official": "Jaiho91 announcement channel"
   },
   "codes": [
+    {
+      "id": "2026-11-26-vip-0",
+      "tier": "VIP 0",
+      "code": "www.jaiho91.com",
+      "sourceUrl": "https://t.me/jaiho91official/800",
+      "publishedAt": "2026-11-26T12:01:14+05:30",
+      "verifiedAt": "2026-11-26T12:06:33+05:30",
+      "expiresAt": "2026-11-27T12:00:00+05:30",
+      "localizedTerms": {
+        "hi": "यह कोड VIP 0 के लिए है। पोस्ट में 27 नवंबर दोपहर 12 बजे लिखा है और समय क्षेत्र नहीं दिया गया है। यहाँ इसे IST माना गया है।",
+        "hi_en": "Yeh code VIP 0 ke liye hai. Post mein 27 November dopahar 12 baje likha hai aur time zone nahi diya gaya. Yahan ise IST maana gaya hai."
+      },
+      "terms": "The announcement lists this entry for VIP 0. The post gives 27 November at noon without a time zone. This tracker interprets the deadline as IST."
+    },
+    {
+      "id": "2026-11-26-vip-1-20",
+      "tier": "VIP 1–20",
+      "code": "91-jaiho.net",
+      "sourceUrl": "https://t.me/jaiho91official/800",
+      "publishedAt": "2026-11-26T12:01:14+05:30",
+      "verifiedAt": "2026-11-26T12:06:33+05:30",
+      "expiresAt": "2026-11-27T12:00:00+05:30",
+      "localizedTerms": {
+        "hi": "यह कोड VIP 1 से 20 के लिए है। पोस्ट में 27 नवंबर दोपहर 12 बजे लिखा है और समय क्षेत्र नहीं दिया गया है। यहाँ इसे IST माना गया है।",
+        "hi_en": "Yeh code VIP 1 se 20 ke liye hai. Post mein 27 November dopahar 12 baje likha hai aur time zone nahi diya gaya. Yahan ise IST maana gaya hai."
+      },
+      "terms": "The announcement lists this entry for VIP 1 through 20. The post gives 27 November at noon without a time zone. This tracker interprets the deadline as IST."
+    },
     {
       "id": "2026-11-25-vip-0",
       "tier": "VIP 0",
