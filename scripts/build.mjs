@@ -288,7 +288,7 @@ function localizedPages(l) {
     path:'/', title:homeTitle, description:l.heroMeta,
     body:`<section class="hero"><div class="wrap hero-grid"><div class="hero-copy">
 <h1>Jaiho91</h1><p class="hero-description">${l.heroIntro}</p>
-<div class="hero-actions"><a class="button" href="${pathFor(l, '/rtp/')}">${rtp.short} ${icon('arrow')}</a><a class="button secondary" href="${pathFor(l, '/codes/')}" data-track="check_codes">${l.codes} ${icon('arrow')}</a></div>
+<div class="hero-actions"><a class="button" href="${pathFor(l, '/codes/')}" data-track="check_codes">${l.codes} ${icon('arrow')}</a><a class="button secondary" href="${pathFor(l, '/rtp/')}">${rtp.short} ${icon('arrow')}</a></div>
 <div class="hero-help"><a class="text-link" href="${h(apkUrl)}" data-track="download_apk" rel="external noreferrer">${icon('download')} ${l.download}</a><a class="text-link" href="${pathFor(l, tutorialsPath)}">${l.tutorialLink} ${icon('arrow')}</a></div></div>
 <div class="hero-art" aria-hidden="true"><span class="orbit orbit-one"></span><span class="orbit orbit-two"></span><span class="spark spark-one">✦</span><span class="spark spark-two">✦</span><span class="spark spark-three">✧</span><img src="/assets/jaiho91-badge.webp" srcset="/assets/jaiho91-badge-small.webp 420w, /assets/jaiho91-badge.webp 720w" sizes="(max-width: 640px) 135px, 344px" alt="" width="720" height="720" decoding="async"></div></div></section>
 <section class="section guide-section"><div class="wrap"><div class="section-heading"><div><h2>${l.guideTitle}</h2><p>${l.guideHomeIntro}</p></div><a class="text-link" href="${pathFor(l, '/guides/')}">${l.allGuides} ${icon('arrow')}</a></div><div class="guide-grid">${guides.slice(0,3).map(guide => guideCard(l, guide)).join('')}</div></div></section>
