@@ -57,6 +57,10 @@ html[lang="hi-IN"] .hero h1{font-size:clamp(2.55rem,7.5vw,5.7rem)}
 .hero h1 em{display:block;color:var(--accent);font-style:normal}
 .hero-description{max-width:455px;font-size:clamp(.98rem,1.6vw,1.14rem);margin-top:21px;color:#ddcde1}
 .hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:25px}
+.promo-cta{position:relative;border-color:#c6a35d;color:#ffe9ab;background:linear-gradient(135deg,#483613,#2d210d);box-shadow:0 0 16px #e8b75845,inset 0 1px 0 #ffedba33}
+.promo-cta:hover{border-color:#f4d37d;background:#59441c;box-shadow:0 0 20px #e8b75860}
+.promo-cta:focus-visible{outline-color:#ffe3a3}
+.promo-badge{position:absolute;inset-block-start:-8px;inset-inline-end:7px;padding:2px 6px;border-radius:20px;background:#c62148;color:#fff;font-size:.59rem;font-weight:800;line-height:1;letter-spacing:.045em}
 .hero-help{display:flex;flex-wrap:wrap;gap:0 16px;margin-top:5px}
 .download-panel{padding:16px 0 0}
 .download-panel p{margin-top:8px;font-size:.87rem}

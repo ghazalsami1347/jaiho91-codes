@@ -160,8 +160,9 @@ test('generates crawlable pages, working internal routes and an empty state with
   for (const prefix of ['', 'hi_en/']) {
     const homepage = await page(prefix + 'index.html');
     const heroActions = homepage.match(/<div class="hero-actions">(.*?)<\/div>/s)?.[1];
-    assert.ok(heroActions?.startsWith('<a class="button" href="/' + prefix + 'codes/" data-track="check_codes"'));
-    assert.ok(heroActions.includes('<a class="button secondary" href="/' + prefix + 'rtp/"'));
+    assert.ok(heroActions?.startsWith('<a class="button" href="/' + prefix + 'rtp/"'));
+    assert.ok(heroActions.includes('<a class="button promo-cta" href="/' + prefix + 'codes/" data-track="check_codes"'));
+    assert.match(heroActions, /<span class="promo-badge" aria-hidden="true">HOT<\/span>/);
     assert.doesNotMatch(homepage, /id="code-status"|data-code-list/);
     const codes = await page(prefix + 'codes/index.html');
     assert.match(codes, prefix ? /Abhi koi verified code available nahi hai/ : /कोई सत्यापित कोड उपलब्ध नहीं/);
