@@ -6,6 +6,77 @@ const ui = JSON.parse(document.body.dataset.ui);
 nav.dataset.collapsible = '';
 menu.hidden = false;
 
+const updatesDrawer = document.querySelector('#site-updates');
+if (updatesDrawer?.showModal) {
+  const toggle = document.querySelector('.updates-trigger');
+  const dot = toggle.querySelector('.updates-dot');
+  const tiers = updatesDrawer.querySelector('.update-tiers');
+  const empty = updatesDrawer.querySelector('[data-updates-empty]');
+  const rows = [...tiers.children];
+  const rotation = updatesDrawer.querySelector('[data-update-interval]');
+  const cycleStart = rotation && Date.parse(rotation.dateTime);
+  const cycleLength = rotation && Number(rotation.dataset.updateInterval);
+  const date = new Intl.DateTimeFormat(document.documentElement.lang === 'hi-IN' ? 'hi-IN' : 'en-IN', {
+    day:'numeric', month:'short', year:'numeric', hour:'numeric', minute:'2-digit', timeZone:'Asia/Kolkata',
+  });
+  const key = 'jaiho91-updates-seen';
+  let seen = new Set();
+  let timer;
+
+  function refreshUpdates() {
+    clearTimeout(timer);
+    const now = Date.now();
+    const ids = [];
+    let nextChange = Infinity;
+    for (const row of rows) {
+      const expires = Number(row.dataset.updateExpires);
+      row.hidden = expires <= now;
+      if (row.hidden) continue;
+      ids.push(row.dataset.updateId);
+      nextChange = Math.min(nextChange, expires);
+    }
+    tiers.hidden = ids.length === 0;
+    empty.hidden = !tiers.hidden;
+    if (rotation) {
+      const start = cycleStart + Math.floor((now - cycleStart) / cycleLength) * cycleLength;
+      rotation.dateTime = new Date(start).toISOString();
+      rotation.textContent = date.format(start) + ' IST';
+      ids.push('rtp:' + rotation.dateTime);
+      nextChange = Math.min(nextChange, start + cycleLength);
+    }
+    const unread = ids.some(id => !seen.has(id));
+    dot.hidden = !unread;
+    toggle.setAttribute('aria-label', unread ? toggle.dataset.unreadLabel : toggle.title);
+    if (Number.isFinite(nextChange)) timer = setTimeout(refreshUpdates, Math.min(nextChange - now, 2_147_483_647));
+    return ids;
+  }
+
+  function syncUpdates() {
+    try {
+      const stored = JSON.parse(localStorage.getItem(key) ?? '[]');
+      if (Array.isArray(stored)) seen = new Set(stored);
+    } catch {}
+    refreshUpdates();
+  }
+
+  toggle.addEventListener('click', () => {
+    const ids = refreshUpdates();
+    updatesDrawer.showModal();
+    toggle.setAttribute('aria-expanded', 'true');
+    seen = new Set(ids);
+    try { localStorage.setItem(key, JSON.stringify(ids)); } catch {}
+    refreshUpdates();
+  });
+  updatesDrawer.addEventListener('close', () => toggle.setAttribute('aria-expanded', 'false'));
+  updatesDrawer.addEventListener('click', event => {
+    if (event.target === updatesDrawer || event.target.closest('[data-updates-link]')) updatesDrawer.close();
+  });
+  window.addEventListener('pageshow', syncUpdates);
+  window.addEventListener('storage', event => { if (event.key === key) syncUpdates(); });
+  syncUpdates();
+  toggle.hidden = false;
+}
+
 const installPopup = document.querySelector('[data-install-popup]');
 if (installPopup) {
   const mobile = matchMedia('(max-width: 640px)');
@@ -48,6 +119,7 @@ if (bonusPopup?.showModal) {
   function showBonusPopup() {
     if (dismissed || wasBonusDismissed() || bonusPopup.open) return;
     const otherDialog = document.querySelector('dialog[open]');
+    if (otherDialog === updatesDrawer) return;
     if (otherDialog) {
       otherDialog.addEventListener('close', showBonusPopup, { once:true });
       return;
@@ -153,7 +225,7 @@ function setMenu(open) {
 
 menu.addEventListener('click', () => setMenu(!nav.hasAttribute('data-open')));
 document.addEventListener('keydown', event => {
-  if (event.key === 'Escape' && nav.hasAttribute('data-open')) {
+  if (event.key === 'Escape' && nav.hasAttribute('data-open') && !document.querySelector('dialog[open]')) {
     setMenu(false);
     menu.focus();
   }

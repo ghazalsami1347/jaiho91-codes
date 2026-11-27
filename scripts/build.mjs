@@ -7,6 +7,7 @@ import { localGuides } from '../content/guides.mjs';
 import { tutorials } from '../content/tutorials.mjs';
 import { rtpBody, rtpCatalog, rtpCopy } from './rtp.mjs';
 import { tiers, validateRegistry, listCodes } from './registry.mjs';
+import { cycleAt, DAY_MS } from '../assets/rtp/core.js';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const out = resolve(root, 'dist');
@@ -23,6 +24,8 @@ const rtpSettings = await json('content/rtp.json');
 const games = rtpCatalog(await json('content/rtp-games.json'), rtpSettings.percentages);
 const rtpTemplate = await readFile(resolve(root, 'content/rtp-template.html'), 'utf8');
 const { active, archive } = listCodes(registry, now);
+const currentCodes = tiers.map(tier => active.find(entry => entry.tier === tier)).filter(Boolean);
+const rtpRotation = Object.keys(rtpSettings.percentages).length ? null : cycleAt(now);
 const arg = process.argv.find(value => value.startsWith('--origin='));
 const basePath = process.argv.find(value => value.startsWith('--base-path='))?.slice('--base-path='.length) ?? '';
 if (basePath && (!/^\/[A-Za-z0-9._-]+(?:\/[A-Za-z0-9._-]+)*$/.test(basePath) || basePath.split('/').some(part => part === '.' || part === '..'))) {
@@ -62,14 +65,15 @@ function mountHtml(html) {
     return `${name}="${url}"`;
   });
 }
-function displayTime(locale, value, withTime = false) {
+function displayTime(locale, value, withTime = false, attributes = '') {
   const options = { day:'numeric', month:'short', year:'numeric', timeZone:'Asia/Kolkata' };
   if (withTime) Object.assign(options, { hour:'numeric', minute:'2-digit' });
   const label = new Intl.DateTimeFormat(locale.prefix ? 'en-IN' : locale.lang, options).format(new Date(value));
-  return `<time datetime="${h(value)}">${h(label)}${withTime ? ' IST' : ''}</time>`;
+  return `<time datetime="${h(value)}"${attributes}>${h(label)}${withTime ? ' IST' : ''}</time>`;
 }
 
 const paths = {
+  bell:'M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9m-8 12a2 2 0 0 0 4 0',
   ticket:'M3 8V5h18v3a4 4 0 0 0 0 8v3H3v-3a4 4 0 0 0 0-8Zm11-2v2m0 3v2m0 3v2',
   shield:'M12 22s7-3 7-10V5l-7-3-7 3v7c0 7 7 10 7 10Zm-3-10 2 2 4-4',
   help:'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Zm-3-13a3 3 0 1 1 4 3c-1 .5-1 1-1 2m0 3h.01',
@@ -124,6 +128,26 @@ ${bonusSignupForm ? `<form class="bonus-form" action="${h(bonusSignupForm)}" met
 <a class="button secondary bonus-channel" href="${sourceChannel}" data-track="source_click" data-bonus-close target="_blank" rel="noopener noreferrer">${h(l.bonusChannel)} ${icon('out')}</a>
 </div>
 </dialog>`;
+}
+
+function updatesDrawer(l) {
+  const u = l.updates;
+  const rotationTime = rtpRotation && new Date(rtpRotation.start).toISOString();
+  return `<dialog class="updates-drawer" id="site-updates" aria-labelledby="updates-title">
+<div class="updates-inner">
+<header class="updates-heading"><h2 id="updates-title">${h(u.title)}</h2><form method="dialog"><button class="updates-close" aria-label="${h(u.close)}" autofocus>${icon('close')}</button></form></header>
+<section class="update-card update-codes" aria-labelledby="updates-codes-title">
+<div class="update-heading"><span class="glyph">${icon('ticket')}</span><h3 id="updates-codes-title">${h(u.codes)}</h3></div>
+<ul class="update-tiers"${currentCodes.length ? '' : ' hidden'}>${currentCodes.map(entry => `<li data-update-id="${h(entry.id)}" data-update-expires="${Date.parse(entry.expiresAt)}"><strong>${h(entry.tier)}</strong><span>${h(l.deadline)} ${displayTime(l, entry.expiresAt, true)}</span></li>`).join('')}</ul>
+<p data-updates-empty${currentCodes.length ? ' hidden' : ''}>${h(l.noCode)}</p>
+<a class="text-link" href="${pathFor(l, '/codes/')}#code-status" data-track="updates_codes_click" data-updates-link>${h(l.check)} ${icon('arrow')}</a>
+</section>
+<section class="update-card" aria-labelledby="updates-rtp-title">
+<div class="update-heading"><span class="glyph">${icon('clock')}</span><h3 id="updates-rtp-title">${h(u.rtp)}</h3></div>
+${rotationTime ? `<p>${h(u.rotation)} · ${displayTime(l, rotationTime, true, ' data-update-interval="' + DAY_MS + '"')}</p>` : ''}
+<a class="text-link" href="${pathFor(l, '/rtp/')}#games" data-updates-link>${h(u.rankings)} ${icon('arrow')}</a>
+</section>
+</div></dialog>`;
 }
 
 function layout(l, { path, title, description, body, article, breadcrumb, lastmod, index = true }) {
@@ -215,11 +239,14 @@ ${brand(l)}
 <div class="primary-nav">${navLinks(primary)}</div>
 <div class="utility-nav" id="utility-nav">${navLinks(utility)}</div>
 </nav>
-<nav class="language-switch" aria-label="${l.prefix ? 'Bhasha' : 'भाषा'}">${languageSwitch}</nav>
+<div class="header-tools">
+${index ? `<button class="updates-trigger" type="button" aria-label="${h(l.updates.title)}" title="${h(l.updates.title)}" data-unread-label="${h(l.updates.unread)}" aria-haspopup="dialog" aria-controls="site-updates" aria-expanded="false" data-track="open_updates" hidden>${icon('bell')}<span class="updates-dot" aria-hidden="true" hidden></span></button>` : ''}
+<nav class="language-switch" aria-label="${l.prefix ? 'Bhasha' : 'भाषा'}">${languageSwitch}</nav></div>
 </div></header>
 ${path === '/' || path === androidPath ? installPopup(l) : ''}
 <main id="main" tabindex="-1">${body}</main>
 ${['/', '/codes/', '/rtp/'].includes(path) ? bonusPopup(l) : ''}
+${index ? updatesDrawer(l) : ''}
 <footer class="site-footer"><div class="wrap footer-grid"><div>${brand(l)}<p>${l.footer}</p></div>
 <nav aria-label="${l.prefix ? 'Footer links' : 'फ़ुटर लिंक'}">${navLinks([...primary, ...utility])}<a href="${pathFor(l, '/about/')}">${l.about}</a><a href="${pathFor(l, '/privacy/')}">${l.privacy}</a></nav></div>
 <div class="wrap footer-bottom"><span>Jaiho91 · ${l.india}</span><span>${l.adults}</span></div></footer>
@@ -289,6 +316,7 @@ function localizedPages(l) {
     body:`<section class="hero"><div class="wrap hero-grid"><div class="hero-copy">
 <h1>Jaiho91</h1><p class="hero-description">${l.heroIntro}</p>
 <div class="hero-actions"><a class="button" href="${pathFor(l, '/rtp/')}">${rtp.short} ${icon('arrow')}</a><a class="button promo-cta" href="${pathFor(l, '/codes/')}" data-track="check_codes">${icon('ticket')} ${l.codes}<span class="promo-badge" aria-hidden="true">HOT</span></a></div>
+<p class="hero-code-review">${icon('clock')} ${h(l.updates.review)} · ${displayTime(l, lastmod, true)}</p>
 <div class="hero-help"><a class="text-link" href="${h(apkUrl)}" data-track="download_apk" rel="external noreferrer">${icon('download')} ${l.download}</a><a class="text-link" href="${pathFor(l, tutorialsPath)}">${l.tutorialLink} ${icon('arrow')}</a></div></div>
 <div class="hero-art" aria-hidden="true"><span class="orbit orbit-one"></span><span class="orbit orbit-two"></span><span class="spark spark-one">✦</span><span class="spark spark-two">✦</span><span class="spark spark-three">✧</span><img src="/assets/jaiho91-badge.webp" srcset="/assets/jaiho91-badge-small.webp 420w, /assets/jaiho91-badge.webp 720w" sizes="(max-width: 640px) 135px, 344px" alt="" width="720" height="720" decoding="async"></div></div></section>
 <section class="section guide-section"><div class="wrap"><div class="section-heading"><div><h2>${l.guideTitle}</h2><p>${l.guideHomeIntro}</p></div><a class="text-link" href="${pathFor(l, '/guides/')}">${l.allGuides} ${icon('arrow')}</a></div><div class="guide-grid">${guides.slice(0,3).map(guide => guideCard(l, guide)).join('')}</div></div></section>

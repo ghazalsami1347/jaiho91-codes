@@ -1,6 +1,11 @@
 export const locales = {
   hi: {
     lang:'hi-IN', prefix:'', label:'हिन्दी',
+    updates:{
+      title:'अपडेट', unread:'अपडेट · नया', close:'अपडेट बंद करें',
+      codes:'मौजूदा प्रोमो कोड', review:'कोड की आखिरी जाँच',
+      rtp:'RTP गेम सूची', rotation:'सूची बदली', rankings:'गेम सूची देखें',
+    },
     bonusTitle:'Jaiho91 के बोनस अपडेट',
     bonusIntro:'नए बोनस और ऑफ़र की जानकारी आधिकारिक Telegram चैनल पर देखें।',
     bonusChannel:'Telegram पर देखें',
@@ -57,6 +62,11 @@ export const locales = {
   },
   hi_en: {
     lang:'hi-Latn-IN', prefix:'/hi_en', label:'Roman Hindi',
+    updates:{
+      title:'Updates', unread:'Updates · naya', close:'Updates band karein',
+      codes:'Abhi ke promo codes', review:'Codes ki aakhri jaanch',
+      rtp:'RTP game list', rotation:'List badli', rankings:'Game list dekhein',
+    },
     bonusTitle:'Jaiho91 ke bonus updates',
     bonusIntro:'Naye bonuses aur offers ki jaankari official Telegram channel par dekhein.',
     bonusChannel:'Telegram par dekhein',

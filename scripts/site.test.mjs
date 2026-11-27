@@ -163,6 +163,7 @@ test('generates crawlable pages, working internal routes and an empty state with
     assert.ok(heroActions?.startsWith('<a class="button" href="/' + prefix + 'rtp/"'));
     assert.ok(heroActions.includes('<a class="button promo-cta" href="/' + prefix + 'codes/" data-track="check_codes"'));
     assert.match(heroActions, /<span class="promo-badge" aria-hidden="true">HOT<\/span>/);
+    assert.ok(homepage.includes(`<time datetime="${registry.lastReviewedAt}">`));
     assert.doesNotMatch(homepage, /id="code-status"|data-code-list/);
     const codes = await page(prefix + 'codes/index.html');
     assert.match(codes, prefix ? /Abhi koi verified code available nahi hai/ : /कोई सत्यापित कोड उपलब्ध नहीं/);
@@ -219,6 +220,14 @@ test('generates crawlable pages, working internal routes and an empty state with
     }
     assert.match(header, /aria-controls="utility-nav"/);
     assert.match(header, /class="language-switch"/);
+    assert.match(header, /<button class="updates-trigger"[^>]+aria-controls="site-updates"[^>]+hidden>/);
+    const updates = html.match(/<dialog class="updates-drawer"[^>]+>.*?<\/dialog>/s)?.[0];
+    assert.ok(updates, `Updates drawer is rendered on ${url.pathname}`);
+    assert.match(updates, /<form method="dialog">/);
+    assert.match(updates, /data-updates-empty>/);
+    assert.ok(updates.includes(`href="${prefix}/codes/#code-status"`));
+    assert.ok(updates.includes(`href="${prefix}/rtp/#games"`));
+    assert.match(updates, /data-update-interval="86400000"/);
     assert.match(html, /<footer class="site-footer">/);
     if (hindiPath === '/rtp/') {
       const featured = html.split('<div id="games"')[1].split('<div id="empty"')[0];
@@ -311,6 +320,7 @@ test('generates crawlable pages, working internal routes and an empty state with
     assert.ok(html.includes(message));
     assert.doesNotMatch(html, /class="rtp-data-notice">/);
     assert.match(html, /class="cycle-bar"[^>]+ hidden>/);
+    assert.doesNotMatch(html, /data-update-interval=/);
   }
   const manualGames = JSON.parse(await page('assets/rtp/games.json'));
   assert.deepEqual(Object.fromEntries(manualGames.filter(game => game.basisPoints !== undefined)

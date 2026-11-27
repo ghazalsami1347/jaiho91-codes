@@ -9,6 +9,8 @@ export const actions = {
   tier_switch:'VIP tier switches',
   source_click:'Source links',
   check_codes:'Check codes clicks',
+  open_updates:'Updates panel opens',
+  updates_codes_click:'Codes clicks from Updates',
   open_guide:'Guide clicks',
   download_apk:'APK download clicks',
 };
